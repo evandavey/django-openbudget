@@ -1,4 +1,5 @@
 django
 south
 pyYAML
+numpy
 
