@@ -1,0 +1,10 @@
+!media/admin/*
+gnucash_datafiles
+build
+dist
+MANIFEST
+*.egg-info
+distribute-*
+*.db
+*.pyc
+*.swp
