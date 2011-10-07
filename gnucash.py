@@ -1,7 +1,9 @@
 import sqlite3
 from datetime import *
 
-conn = sqlite3.connect('InvestmentPortfolio.gnucash')
+datafile='gnucash_datafiles/CochraneDaveyUK.gnucash'
+
+conn = sqlite3.connect(datafile)
 conn.row_factory = sqlite3.Row
 c = conn.cursor()
 c.execute('select a.guid as aID,a.name as aName,a.account_type as aType from accounts as a')
