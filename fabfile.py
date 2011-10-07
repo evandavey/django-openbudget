@@ -120,7 +120,7 @@ def migratedb():
 def schemedb():
     """ runs the local server """
     require('environment',provided_by=('development'))
-    local('./manage.py schemamigration financemanager --auto --settings=%s.settings_local' % (env.project))
+    local('./manage.py schemamigration openbudgetapp --auto --settings=%s.settings_local' % (env.project))
 
 def runserver():
     """ runs the local server """
