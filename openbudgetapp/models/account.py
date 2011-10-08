@@ -20,6 +20,7 @@ class Account(models.Model):
 		"""
 		return "%s (%s)" % (self.name,self.account_type) 
 	
+			
 	
 	def splits(self):
 		
@@ -43,5 +44,11 @@ class Account(models.Model):
 		return splits.value.sum()
 		
 	
-		
-		
+	@property
+	def child_balance(self):
+
+		bal=0
+		for c in self.child.all()
+			bal+=c.balance
+
+		return bal
