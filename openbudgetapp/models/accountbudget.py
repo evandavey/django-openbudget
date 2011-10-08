@@ -1,5 +1,5 @@
 from django.db import models
-
+from openbudgetapp.models.split import Split
 # Create your models here.
 
 
@@ -17,4 +17,15 @@ class AccountBudget(models.Model):
 	def __unicode__(self):
 		""" Returns the custom output string for this object
 		"""
-		return "%s (%s)" % (self.postdate,self.description) 
+		return "%s-%s, %s, %.2f" % (self.startdate,self.enddate,self.account,self.value) 
+		
+	@property	
+	def actual(self):
+		
+		actual=self.account.balance_between(self.startdate,self.enddate,True)
+		
+		return actual
+		
+		
+
+		

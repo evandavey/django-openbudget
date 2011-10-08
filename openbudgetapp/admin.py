@@ -33,7 +33,7 @@ class SplitAdmin(admin.ModelAdmin):
 class AccountBudgetAdmin(admin.ModelAdmin):
 	""" Object to control the behaviour of the linked object in the Admin interface
 	"""
-	list_display = ['id','account','value']
+	list_display = ['id','account','value','actual']
 	list_filter = []
 	ordering = []
 	search_fields = []
