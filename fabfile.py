@@ -27,8 +27,8 @@ from contextlib import contextmanager as _contextmanager
 from fabric.colors import *
 
 
-env.project = 'openportfolio'
-env.git_url = 'git://github.com/evandavey/OpenPortfolio.git'
+env.project = 'openbudget'
+env.git_url = 'git://github.com/evandavey/OpenBudget.git'
 
 
 
@@ -39,6 +39,12 @@ def _setup_path():
 	env.settings = '%(project)s.settings_%(environment)s' % env
 
 
+def localmachine():
+	env.environment = 'local'
+	env.serverport = '8081'
+	env.code_root = '.'
+	env.virtualenv_root = "~/.virtualenvs"
+
 def development():
 	""" Development settings.  Modify these to match your environment """
 	env.home = '/Users/evandavey/django-dev/'
@@ -46,6 +52,7 @@ def development():
 	env.hosts = ['localhost']
 	env.user = 'evandavey'
 	env.serverport = '8081'
+	env.git_branch = 'develop'
 	_setup_path()
 
 def staging():
@@ -78,6 +85,7 @@ def bootstrap():
 	create_virtualenv()
 	clone_remote()
 	update_requirements()
+	update_python_path()
 	syncdb()
 	migratedb()
 	
@@ -95,6 +103,17 @@ def clone_remote():
 	
 	run('rm -rf %s' % os.path.join(env.root,env.project))
 	run('git clone %s %s/%s' % (env.git_url,env.root,env.project))
+	
+	with cd(env.code_root):
+		run('git checkout %s' % (env.git_branch))
+
+
+def update_python_path():
+
+	print(green("Updating python path %s" % env.root))
+	sys.path.insert(0,env.root) 
+
+
 
 
 def update_remote():
@@ -154,8 +173,10 @@ def runserver():
 
 	with virtualenv():
 		with cd(env.code_root):
-			run('./manage.py runserver 0.0.0.0:%s --settings=%s.settings_%s' % (env.serverport,env.project,env.environment))
-
+			if env.environment != 'local':
+				run('./manage.py runserver 0.0.0.0:%s --settings=%s.settings_%s' % (env.serverport,env.project,env.environment))
+			else:
+				local('./manage.py runserver 0.0.0.0:%s --settings=%s.settings_%s' % (env.serverport,env.project,env.environment))
 
 	
 @_contextmanager
