@@ -1,9 +1,71 @@
-{% extends "financemanager/base.html" %}
-{% block title %}Investment Analysis{% endblock %}
+{% extends "base.html" %}
+{% load openbudgetapp_extras %}
+
+{% block title %}Budget{% endblock %}
 {% block content %}
 
+{% if user.is_authenticated %}
 
-<a href="/financemanager/investment">Investments</a><br/>
-<a href="/financemanager/portfolio">Portfolios</a>
+
+{%for a in account_type_list%}
+<h2>{{a.label}}</h2>
+
+<table id="budget">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			{% for d in dates %}
+			<th colspan="2">{{d|date:"M Y" }}</th>
+			{%endfor%}
+		</tr>
+		<tr>
+			<th>&nbsp;</th>
+			{% for d in dates %}
+			<th >Actual</th>
+			<th >Budget</th>
+			{%endfor%}
+		</tr>
+	</thead>
+	<tbody>
+
+{% for item in a.list %} 
+	{%if item != 'out'%}
+	{%if item != 'in' %}
+    <tr>
+	<td class="leftcol">
+    {% for depth in item.depth|get_range%}        
+  
+	{%if depth > 0 %}
+		-
+	{%endif%}
+	{%endfor%}
+	{{item.name}}
+    </td>
+	{%if item.leaf%}
+	{% for k,d in item.budget_data.items %}
+    <td>{{d.actual}}</td>
+	{%if d.vsbudget < 0 %}
+ 		<td class="over">{{d.budget}}</td>
+	{%else%}
+		<td class="under">{{d.budget}}</td>
+	{%endif%}
+	{% endfor %}
+	{%else%}
+	&nbsp;
+	{%endif%}
+	</tr>
+	{%endif%}
+	{%endif%}
+	
+{% endfor %}
+</tbody>
+</table>
+{% endfor %}
+		
+{% else %}
+    <p>Welcome, new user. Please log in.</p>
+{% endif %}
+
+
 
 {% endblock %}

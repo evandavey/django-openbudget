@@ -6,17 +6,15 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'django_cochranedavey.views.home', name='home'),
-    
-    (r'^$',include('openbudgetapp.urls')),
-	
-    url(r'^openbudgetapp/', include('openbudgetapp.urls')),
 
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+(r'^$',include('openbudgetapp.urls')),
 
-    # Uncomment the next line to enable the admin:
-    url(r'^admin/', include(admin.site.urls)),
+(r'^openbudgetapp/', include('openbudgetapp.urls')),
+
+(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
+
+(r'^admin/', include(admin.site.urls)),
+
 )
+
 
