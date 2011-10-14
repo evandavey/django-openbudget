@@ -1,4 +1,22 @@
-import os
+"""
+This fabfile automates the deployment of github hosted django projects
+
+Author: Evan Davey, evan.j.davey@gmail.com
+
+
+Instructions:
+
+Modify the environment variables in development,staging or production to
+reflect your working environment
+
+To run the project on a development or local machine.
+
+$ fab development bootstrap
+$ fab development runserver 
+
+"""
+
+import os,sys
 
 from fabric.api import *
 from fabric.contrib.project import rsync_project
@@ -6,197 +24,175 @@ from fabric.contrib import files, console
 from fabric import utils
 from fabric.decorators import hosts
 from contextlib import contextmanager as _contextmanager
+from fabric.colors import *
 
-RSYNC_EXCLUDE = (
-    '.DS_Store',
-    '.hg',
-    '*.pyc',
-    '*.example',
-    '*.db',
-    'media/admin',
-    'media/attachments',
-    'local_settings.py',
-    'fabfile.py',
-)
-env.home = '/usr/local/web/django'
-env.project = 'openbudget'
-env.deploy_user='evandavey'
+
+env.project = 'openportfolio'
+env.git_url = 'git://github.com/evandavey/OpenPortfolio.git'
+
 
 
 def _setup_path():
-    env.root = os.path.join(env.home, 'www', env.environment)
-    env.code_root = os.path.join(env.root, env.project)
-    env.virtualenv_root = os.path.join(env.root, 'env')
-    env.settings = '%(project)s.settings_%(environment)s' % env
+	env.root = os.path.join(env.home, 'www', env.environment)
+	env.code_root = os.path.join(env.root, env.project)
+	env.virtualenv_root = os.path.join(env.root, 'env')
+	env.settings = '%(project)s.settings_%(environment)s' % env
 
 
 def development():
-    env.environment = 'development'
-
-
+	""" Development settings.  Modify these to match your environment """
+	env.home = '/Users/evandavey/django-dev/'
+	env.environment = 'development'
+	env.hosts = ['localhost']
+	env.user = 'evandavey'
+	env.serverport = '8081'
+	_setup_path()
 
 def staging():
 	""" use staging environment on remote host"""
+
+	env.home = '/usr/local/web/django'
+	env.apacheconfig = '/usr/local/web/config'
 	env.user = 'evandavey'
 	env.environment = 'staging'
-	env.hosts = ['192.168.0.21']
-	env.servername = 'openbudget.getoutsideandlive.com'
+	env.hosts = ['192.168.0.20']
+	env.servername = 'openportfolio-staging.getoutsideandlive.com'
 	_setup_path()
 
 
 def production():
-    """ use production environment on remote host"""
-    utils.abort('Production deployment not yet implemented.')
+	env.home = '/usr/local/web/django'
+	env.user = 'evandavey'
+	env.environment = 'production'
+	env.hosts = ['192.168.0.21']
+	env.servername = 'openportfolio.getoutsideandlive.com'
+	_setup_path()
 
 
 def bootstrap():
-    """ initialize remote host environment (virtualenv, deploy, update) """
-    require('root', provided_by=('staging', 'production'))
-    run('mkdir -p %(root)s' % env)
-    run('mkdir -p %s' % os.path.join(env.home, 'www', 'log'))
-    create_virtualenvwrapper()
-    deploy()
-    update_requirements()
-
-
-def create_virtualenvwrapper():
-	""" setup virtualenv on remote host using virtualenvwrapper """
+	""" sets up host system virtual environment and directory structure """
 	
-	require('virtualenv_root', provided_by=('staging', 'production'))
-	sudo('WORKON_HOME=%s' % (env.virtualenv_root) + ' && ' + 'source /usr/local/bin/virtualenvwrapper.sh && ' + 'mkvirtualenv %s' % (env.project),user=env.deploy_user)
+	print(green("Creating project directories"))
+	run('mkdir -p %(root)s' % env)
+	run('mkdir -p %s' % os.path.join(env.home, 'www', 'log'))
+	create_virtualenv()
+	clone_remote()
+	update_requirements()
+	syncdb()
+	migratedb()
+	
+def create_virtualenv():
+	""" creates a virtual environment """
+	
+	print(green("Creating a virtual environment in %s" % env.virtualenv_root))
+	sudo('WORKON_HOME=%s' % (env.virtualenv_root) + ' && ' + 'source /usr/local/bin/virtualenvwrapper.sh && ' + 'mkvirtualenv %s' % (env.project),user=env.user)
+	
+
+def clone_remote():
+	""" Downloads project code from its git repository """
+	
+	print(green("Cloning repository %s" % env.git_url))
+	
+	run('rm -rf %s' % os.path.join(env.root,env.project))
+	run('git clone %s %s/%s' % (env.git_url,env.root,env.project))
+
+
+def update_remote():
+
+	pull_remote()
+	syncdb()
+	migratedb()
+
+
+def pull_remote():
+	
+	print(green("Pulling remote repo"))
+
+	with cd(env.code_root):
+		run('git pull origin master')
+	
+
+def update_requirements():
+	""" update external dependencies  """
+	
+	print(green("Installing dependencies - this may take some time, please be patient"))
+	requirements = os.path.join(env.code_root, 'requirements')
+	with cd(requirements):
+		cmd = ['pip install']
+		#cmd +=['-q']
+		cmd += ['-r %s' % os.path.join(requirements, '%s.txt' % env.environment)]
+
+		with virtualenv():
+			run(' '.join(cmd))
+	
+	
+def syncdb():
+	""" syncs the django database """
+	
+	print(green("Syncing %s database" % env.project))
+	
+	with virtualenv():
+		with cd(env.code_root):
+			run('./manage.py syncdb --settings=%s.settings_%s' % (env.project,env.environment))
+
+def migratedb():
+	""" syncs the django database """
+	
+	print(green('Migrating apps in db'))
+
+	with virtualenv():
+		with cd(env.code_root):
+			run('./manage.py migrate --all --settings=%s.settings_%s' % (env.project,env.environment))
+
+
+def runserver():
+	""" runs the project as a development server """
+
+	require('serverport',provided_by=development)
+
+	print(green('Running development server.  Access at http://127.0.0.1:%s' % env.serverport))
+
+	with virtualenv():
+		with cd(env.code_root):
+			run('./manage.py runserver 0.0.0.0:%s --settings=%s.settings_%s' % (env.serverport,env.project,env.environment))
+
+
 	
 @_contextmanager
 def virtualenv():
+	""" Wrapper function to ensure code is run under a virtual environment """
 	
 	venv_dir=os.path.join(env.virtualenv_root, env.project)
 	activate='source ' + os.path.join(venv_dir,'bin','activate')
-	
+
 	with prefix(activate):
 	    yield
 	
 
-def deploy():
-    """ rsync code to remote host """
-    require('root', provided_by=('staging', 'production'))
-    if env.environment == 'production':
-        if not console.confirm('Are you sure you want to deploy production?',
-                               default=False):
-            utils.abort('Production deployment aborted.')
-    # defaults rsync options:
-    # -pthrvz
-    # -p preserve permissions
-    # -t preserve times
-    # -h output numbers in a human-readable format
-    # -r recurse into directories
-    # -v increase verbosity
-    # -z compress file data during the transfer
-    extra_opts = '--omit-dir-times'
-    rsync_project(
-        env.root,
-        exclude=RSYNC_EXCLUDE,
-        delete=True,
-        extra_opts=extra_opts,
-    )
-    touch()
-    collect_static_files()
-    apache_reload()
-    
-
-def syncdb():
-    """ runs the local server """
-    require('environment',provided_by=('development'))
-    local('./manage.py syncdb --settings=%s.settings_local' % (env.project))
-
-def testcode():
-    """ runs the local server """
-    require('environment',provided_by=('development'))
-    local('./manage.py test-code --settings=%s.settings_local' % (env.project))
-
-def migratedb():
-    """ runs the local server """
-    require('environment',provided_by=('development'))
-    local('./manage.py migrate --all --settings=%s.settings_local' % (env.project))
-
-def schemedb():
-    """ runs the local server """
-    require('environment',provided_by=('development'))
-    local('./manage.py schemamigration openbudgetapp --auto --settings=%s.settings_local' % (env.project))
-
-def runserver():
-    """ runs the local server """
-    require('environment',provided_by=('development'))
-    local('./manage.py runserver 0.0.0.0:8080 --settings=%s.settings_local' % (env.project))
-
-def shell():
-    """ runs the local shell """
-    require('environment',provided_by=('development'))
-    local('./manage.py shell --settings=%s.settings_local' % (env.project))
-
-
-def update_conf_files():
-	""" updates conf files to relect fabfile environment settings """
-
-	require('environment', provided_by=('staging', 'production'))
-	require('project', provided_by=('staging', 'production'))
-	require('servername', provided_by=('staging', 'production'))
-	require('home', provided_by=('staging', 'production'))
-
-	f=open('apache/template.conf','r')
-	o=open('apache/%s.conf' % (env.environment),'w')
-
-	for line in f.readlines():
-		line=line.replace('<project>',env.project)
-		line=line.replace('<environment>',env.environment)
-		line=line.replace('<servername>',env.servername)
-		line=line.replace('<home>',env.home)
-		o.write(line+"\n")
-		
-	f=open('apache/template.wsgi','r')
-	o=open('apache/%s.wsgi' % (env.environment),'w')
-
-	for line in f.readlines():
-		line=line.replace('<project>',env.project)
-		line=line.replace('<environment>',env.environment)
-		line=line.replace('<servername>',env.servername)
-		line=line.replace('<home>',env.home)
-		o.write(line+"\n")
-
-
-
-def update_requirements():
-	""" update external dependencies on remote host """
-	require('code_root', provided_by=('staging', 'production'))
-	requirements = os.path.join(env.code_root, 'requirements')
-	with cd(requirements):
-		cmd = ['pip install']
-		cmd +=['-U']
-		#cmd += ['-E %(virtualenv_root)s' % env]
-		cmd += ['-r %s' % os.path.join(requirements, 'apps.txt')]
-		
-		with virtualenv():
-			run(' '.join(cmd))
-
-def touch():
-    """ touch wsgi file to trigger reload """
-    require('code_root', provided_by=('staging', 'production'))
-    apache_dir = os.path.join(env.code_root, 'apache')
-    with cd(apache_dir):
-        run('touch %s.wsgi' % env.environment)
-
-
-def collect_static_files():
-    """ collect static files on remote host """
-    with virtualenv():
-        run ('%s/manage.py collectstatic --settings=%s.settings_%s' % (env.code_root,env.project,env.environment))
-
-
+def apache_setup():
+	
+	print(green('Updating apache settings'))
+	
+	create_apache_conf_files()
+	update_apache_conf()
+	
 def update_apache_conf():
-    """ upload apache configuration to remote host """
-    require('root', provided_by=('staging', 'production'))
-    source = os.path.join('apache', '%(environment)s.conf' % env)
-    dest = os.path.join(env.home, '../config/sites','0002_any_443_financedb.getoutsideandlive.com.conf')
-    put(source, dest, mode=0755)
-    apache_reload()
+	""" upload apache configuration to remote host """
+
+	require('root', provided_by=('staging', 'production'))
+
+	print(red('moving conf files'))
+
+	conf_dest = os.path.join(env.apacheconfig, 'sites','%(servername)s.conf' % env)
+	conf=os.path.join(env.code_root,'install','%s.conf' % env.environment)
+
+	wsgi=os.path.join(env.code_root,'install','%s.wsgi' % env.environment)
+	wsgi_dest=os.path.join(env.code_root,'apache','%s.wsgi' % env.environment)
+
+	run('mkdir -p %s' % os.path.join(env.code_root,'apache'))
+	run('cp %s %s' % (wsgi,wsgi_dest))
+	run('cp %s %s' % (conf,conf_dest))
+	apache_reload()
 
 
 def configtest():    
@@ -206,29 +202,125 @@ def configtest():
 
 
 def apache_reload():    
-    """ reload Apache on remote host """
-    require('root', provided_by=('staging', 'production'))
-    run('sudo apachectl restart')
+	""" reload Apache on remote host """
+
+	print(red('Reloading apache'))
+
+	require('root', provided_by=('staging', 'production'))
+	run('sudo apachectl restart')
 
 
-def apache_restart():    
-    """ restart Apache on remote host """
-    require('root', provided_by=('staging', 'production'))
-    run('sudo apachectl restart')
+def osx_bootstrap():
+	""" Performs additional osx bootstrapping """
+	
+	print(red('Running additional osx bootstrapping'))
+	
+	create_osx_launchd_file()
+	update_osx_launchd_file()
+
+def create_apache_conf_files():
+	""" creates apache conf files from templates in ./install/ """
+
+	print(green('Creating apache conf files from templates'))
+	
+	conf_template=os.path.join(env.code_root,'install','template.conf')
+	
+	conf_template=get(conf_template)[0]
+	
+	conf=os.path.join(env.code_root,'install','%s.conf' % env.environment)
+	
+	wsgi_template=os.path.join(env.code_root,'install','template.wsgi')
+	wsgi=os.path.join(env.code_root,'install','%s.wsgi' % env.environment)
+	wsgi_template=get(wsgi_template)[0]
+	
+	r={ 'project':env.project,
+		'environment':env.environment,
+		'servername':env.servername,
+		'home':env.home,
+		'certificate-file':os.path.join(env.apacheconfig,'ssl-certificate.conf')
+	}
+	
+	print(red('Replacing %s and saving as %s' % (conf_template,conf)))
+	_open_file_and_replace(conf_template,conf_template + ".out",r)
+	put(conf_template+ ".out", conf, mode=0755)
+	
+	print(red('Replacing %s and saving as %s' % (conf_template,conf)))
+	_open_file_and_replace(wsgi_template,wsgi_template+".out",r)
+	put(wsgi_template+ ".out", wsgi, mode=0755)
+	
+	
+	local('rm -r %s' % env.host)
+
+	
+	
+	
+
+def create_osx_launchd_file():
+	""" creates an osx launchd file from templates in ./install/ """
+
+	print(green('Creating launchd files from templates'))
+
+	conf_template=os.path.join(env.code_root,'install','launchd-template.plist')
+	conf=os.path.join(env.code_root,'install','org.%s-%s.update.plist' % (env.project,env.environment))
+
+	r={ 'project':env.project,
+		'environment':env.environment,
+		'code_root':env.code_root,
+	}
+
+	print(red('Replacing %s and saving as %s' % (conf_template,conf)))
+	_open_file_and_replace(conf_template,conf,r)
+	
+	
+def update_osx_launchd_file():
+	""" Moves project launchd file to /Library/LaunchDaemons """
+	
+	launchdf='org.%s-%s.update.plist' % (env.project,env.environment)
+	installdir=os.path.join(env.code_root,'install')
+	launchddir='/Library/LaunchDaemons/'
+	
+	src=os.path.join(installdir,launchdf)
+	dest=os.path.join(launchddir,launchdf)
+	
+	with cd(installdir):
+		sudo('cp %s %s' % (src,dest))
+		sudo('chown root %s' % dest)
+		sudo('launchctl load %s' % dest)
+		
+def remove_osx_launchd_file():
+	""" Removes launchd file from /Library/LaunchDaemons """
+
+	launchdf='org.%s-%s.update.plist' % (env.project,env.environment)
+	
+	launchddir='/Library/LaunchDaemons/'
+
+	dest=os.path.join(launchddir,launchdf)
 
 
-def symlink_django():    
-    """ create symbolic link so Apache can serve django admin media """
-    require('root', provided_by=('staging', 'production'))
-    admin_media = os.path.join(env.virtualenv_root,
-                               'src/django/django/contrib/admin/media/')
-    media = os.path.join(env.code_root, 'media/admin')
-    if not files.exists(media):
-        run('ln -s %s %s' % (admin_media, media))
+	sudo('launchctl unload %s' % dest)
+	sudo('rm %s' % (dest))
+	
+		
+		
 
 
-def reset_local_media():
-    """ Reset local media from remote host """
-    require('root', provided_by=('staging', 'production'))
-    media = os.path.join(env.code_root, 'media', 'upload')
-    local('rsync -rvaz %s@%s:%s media/' % (env.user, env.hosts[0], media))
+def _open_file_and_replace(src,dest,replace_dict):
+	""" replaces <key> in src with val from key,val of replace_dict with supplied values and saves as dest 
+	"""
+	
+	f=open(src,'r')
+	o=open(dest,'w')
+	
+	for line in f.readlines():
+		for k,r in replace_dict.iteritems():
+			line=line.replace('<%s>' % k,'%s' % r)
+			
+		o.write(line+"\n")
+		
+	f.close()
+	o.close()
+	
+	
+
+
+
