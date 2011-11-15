@@ -6,17 +6,68 @@
 
 {% if user.is_authenticated %}
 
+<table id="budget">
+<caption>SUMMARY</caption>
+<thead>
+	<tr>
+		<th>&nbsp;</th>
+		{% for d in dates %}
+		<th scope="col" colspan="2">{{d|date:"M Y" }}</th>
+		{%endfor%}
+		<th scope="col" colspan="3" class="totalcol_l">TOTAL</th>
+	</tr>
+	<tr>
+		<th>&nbsp;</th>
+		{% for d in dates %}
+		<th >Actual</th>
+		<th >Budget</th>
+		{%endfor%}
+		<th class="totalcol_l">Actual</th>
+		<th class="totalcol_r">Budget</th>
+		<th class="totalcol_r">vs</th>
+
+	</tr>
+</thead>
+<tbody>
+{%for a in account_type_list%}
+<tr>
+	<td class="leftcol">{{a.label}}</td>
+	{%for t in a.totals%}
+	<td>{{t.actual}}</td>
+	<td>{{t.budget}}</td>
+	{%endfor%}
+	<td class="totalcol_l">{{a.budget_sums.actual}}</td>
+	<td class="totalcol_r">{{a.budget_sums.budget}}</td>
+	<td class="totalcol_r">{{a.budget_sums.vsbudget}}</td>
+
+</tr>
+{%endfor%}
+</tbody>
+<tfoot>
+<tr>
+	<td class="leftcol">TOTAL</td>
+	{%for t in summary_totals%}
+	<td>{{t.actual}}</td>
+	<td>{{t.budget}}</td>
+	{%endfor%}
+	<td class="totalcol_l">{{summary_overall_total.actual}}</td>
+	<td class="totalcol_r">{{summary_overall_total.budget}}</td>
+	<td class="totalcol_r">{{summary_overall_total.vsbudget}}</td>
+	
+</tr>
+</tfoot>
+</table>
 
 {%for a in account_type_list%}
-<h2>{{a.label}}</h2>
-
 <table id="budget">
+	<caption>{{a.label}}</caption>
 	<thead>
 		<tr>
 			<th>&nbsp;</th>
 			{% for d in dates %}
-			<th colspan="2">{{d|date:"M Y" }}</th>
+			<th scope="col" colspan="2">{{d|date:"M Y" }}</th>
 			{%endfor%}
+			<th scope="col" colspan="3" class="totalcol_l">TOTAL</th>
 		</tr>
 		<tr>
 			<th>&nbsp;</th>
@@ -24,6 +75,10 @@
 			<th >Actual</th>
 			<th >Budget</th>
 			{%endfor%}
+			<th class="totalcol_l">Actual</th>
+			<th class="totalcol_r">Budget</th>
+			<th class="totalcol_r">vs</th>
+
 		</tr>
 	</thead>
 	<tbody>
@@ -32,7 +87,7 @@
 	{%if item != 'out'%}
 	{%if item != 'in' %}
     <tr>
-	<td class="leftcol">
+	<td scope="row" class="leftcol">
     {% for depth in item.depth|get_range%}        
   
 	{%if depth > 0 %}
@@ -41,24 +96,73 @@
 	{%endfor%}
 	{{item.name}}
     </td>
+	
+	
+	{% for d in item.budget_data %}
 	{%if item.leaf%}
-	{% for k,d in item.budget_data.items %}
-    <td>{{d.actual}}</td>
-	{%if d.vsbudget < 0 %}
- 		<td class="over">{{d.budget}}</td>
+   	 <td>{{d.actual}}</td>
+		{%if a.type == 'E' %}
+			{%if d.vsbudget < threshold_over %}
+	 		<td class="over">{{d.budget}}</td>
+			{%else%}
+				{%if d.vsbudget > threshold_under %}
+				<td class="under">{{d.budget}}</td>
+				{%else%}
+					<td>{{d.budget}}</td> 
+				{%endif%}
+			{%endif%}
+		{%else%}
+			{%if a.type == 'I' %}
+				{%if d.vsbudget > threshold_under %}
+		 		<td class="over">{{d.budget}}</td>
+				{%else%}
+					{%if d.vsbudget < threshold_over %}
+					<td class="under">{{d.budget}}</td>
+					{%else%}
+						<td>{{d.budget}}</td>
+					{%endif%}
+				{%endif%}
+			{%endif%}
+		{%endif%}
+		
 	{%else%}
-		<td class="under">{{d.budget}}</td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
 	{%endif%}
 	{% endfor %}
+	{%if item.leaf%}
+	<td class="totalcol_l">{{item.budget_sums.actual}}</td>
+	<td class="totalcol_r">{{item.budget_sums.budget}}</td>
+	<td class="totalcol_r">{{item.budget_sums.vsbudget}}</td>
+
 	{%else%}
-	&nbsp;
+	<td class="totalcol_l">&nbsp;</td>
+	<td class="totalcol_r">&nbsp;</td>
+	<td class="totalcol_r">&nbsp;</td>
+
 	{%endif%}
+	
 	</tr>
 	{%endif%}
 	{%endif%}
 	
+
+	</tr>
 {% endfor %}
 </tbody>
+<tfoot>
+
+<tr>
+	<td>TOTAL</td>
+{% for t in a.totals %}
+	<td>{{t.actual}}</td><td>{{t.budget}}</td>
+{% endfor %}
+<td class="totalcol_l">{{a.budget_sums.actual}}</td>
+<td class="totalcol_r">{{a.budget_sums.budget}}</td>
+<td class="totalcol_r">{{a.budget_sums.vsbudget}}</td>
+
+</tr>
+</tfoot>
 </table>
 {% endfor %}
 		

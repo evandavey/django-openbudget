@@ -11,8 +11,7 @@
   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
 
   <link rel="stylesheet" href="{{ STATIC_URL }}css/openbudget.css" type="text/css" />
-  <link rel="stylesheet" href="{{ MEDIA_URL }}css/pygments.css" type="text/css" />
-  <link rel="alternate" href="/feeds/latest/" type="application/atom+xml" title="Feed of latest snippets" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/print.css" type="text/css" media="print"/>
   {% block feeds %}{% endblock %}
   
   {% block extra_scripts %}{% endblock %}
@@ -70,16 +69,6 @@
     </div>
     <p id="copyright"></p>
   </div>
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-16402186-1']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
+ 
 </body>
 </html>

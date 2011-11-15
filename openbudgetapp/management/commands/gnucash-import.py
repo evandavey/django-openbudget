@@ -25,8 +25,8 @@ class Command(BaseCommand):
 		
 		conn.row_factory = sqlite3.Row
 		
-		self.stdout.write('.Clearing old Accounts\n')
-		Account.objects.all().delete()
+		#self.stdout.write('.Clearing old Accounts\n')
+		#Account.objects.all().delete()
 
 		self.stdout.write('.Quering db\n')
 		
@@ -48,7 +48,10 @@ class Command(BaseCommand):
 		self.stdout.write('.Creating accounts\n')
 		for r in c:
 			
-			a=Account()
+			try:
+				a=Account.objects.get(pk=r['aId'])
+			except:
+				a=Account()
 			
 			a.guid=r['aId']
 			a.name=r['aName']

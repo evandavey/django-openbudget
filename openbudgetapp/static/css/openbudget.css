@@ -437,46 +437,80 @@ h2 {
     margin-left: 20px;
 }
 
-
-
-table#budget {
-	
-	font-size: 10px;
-	width: 100%;
-	border-collapse:collapse;
-	
+#budget
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	background: #fff;
+	margin: 45px;
+	width: 480px;
+	border-collapse: collapse;
+	text-align: left;
 }
 
-table#budget td {
-    padding: 5px;
-    border: solid #000 1px;
- 	text-align: right;
-
-
+#budget caption
+{
+	font-size: 18px;
+	font-weight: bold;
+	#color: #039;
 }
 
-table#budget thead th {
-	font-style: italic;
-    text-align: center;
-	color: #FFF;
-    background-color: #003366;
-	
+#budget th
+{
+	font-size: 14px;
+	font-weight: normal;
+	color: #039;
+	padding: 10px 8px;
+	border-bottom: 2px solid #6678b1;
+	text-align: center;
+}
+#budget td
+{
+	border-bottom: 1px solid #ccc;
+	color: #669;
+	white-space:nowrap;
+	padding: 6px 8px;
+	text-align: right;
+}
+#budget tbody tr:hover td
+{
+	color: #009;
 }
 
-table#budget td.leftcol {
-    font-weight: bold;
-    text-align: left;
-    width: 150px;
-    background-color: #CCCCCC;
+#budget tfoot
+{
+	font-weight: bold;
+	color: #039;
+	padding: 10px 8px;
+	border-top: 2px solid #6678b1;
+	border-bottom: 2px solid #6678b1;
 }
+
+#budget .leftcol
+{
+	text-align: left;
+	white-space:nowrap;
+}
+
+#budget .totalcol_l
+{
+	font-weight: bold;
+	border-left: 2px solid #6678b1;
+}
+
+#budget .totalcol_r
+{
+	font-weight: bold;
+}
+
+
 
 .over {
-    font-weight: bold;
-    width: 150px;
-    background-color: #FF0000;
+    background-color: #F78181;
 }
 
 .under {
+	background-color: #81F79F
 	
 	
 }

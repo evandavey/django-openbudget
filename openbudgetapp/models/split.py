@@ -17,15 +17,15 @@ class Split(models.Model):
 	
 	@property
 	def date(self):
-		return tx.postdate
+		return self.tx.postdate
 		
 	@property
 	def account_name(self):
-		return account.name
+		return self.account.name
 	
 	@property
 	def description(self):
-		return tx.description
+		return self.tx.description
 	
 	def __unicode__(self):
 		""" Returns the custom output string for this object

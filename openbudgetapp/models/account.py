@@ -3,12 +3,15 @@ from openbudgetapp.models.split import Split
 from openbudgetapp.models.accountbudget import AccountBudget
 
 import numpy as np
+import pandas as ps
 from decimal import *
+from datetime import datetime,time
 
 class Account(models.Model):
 
 	class Meta: 
 		app_label = 'openbudgetapp'
+		ordering = ['name']
 
 
 	guid=models.CharField(max_length=32,primary_key=True)
@@ -17,26 +20,47 @@ class Account(models.Model):
 	parent=models.ForeignKey('self',null=True,related_name='child')
 	
 	@property
+	def timeseries(self):
+		dates=list(self.split_set.dates('tx__postdate','day'))
+	
+		values=[]
+		for d in dates:
+			v_qs=self.split_set.filter(tx__postdate=d)
+			vs=0
+			for v in v_qs:
+				vs+=v.value
+				
+			values.append(Decimal(abs(vs)))
+	
+		if values==[]:
+			return None
+		else:
+			return ps.TimeSeries(values,index=dates)
+	
+	
+	@property
 	def formatted_name(self):
 		
 		names=[]
 		parent=self.parent
-		while parent.name != 'Root Account' and parent.name.upper() != self.account_type + 'S':
-			names.append(parent.name)
-			parent=parent.parent
+		if parent is not None:
+			while parent.name != 'Root Account' and parent.name.upper() != self.account_type + 'S':
+				names.append(parent.name)
+				parent=parent.parent
 			
 		name=''
-		
+	
 		names.reverse()
 		for n in names:
 			name+=n+":"
-		
+	
 		return name+':'+self.name
+			
 		
 	def __unicode__(self):
 		""" Returns the custom output string for this object
 		"""
-		return "%s (%s)" % (self.name,self.account_type) 
+		return "%s (%s)" % (self.formatted_name,self.account_type) 
 	
 			
 	
@@ -101,6 +125,17 @@ class Account(models.Model):
 			bal+=c.balance
 
 		return bal
+		
+	@property
+	def budgets(self):
+		
+		
+		bs=self.accountbudget_set.all()
+		
+		for c in self.child.all():
+			bs = bs | c.budgets
+		
+		return bs
 		
 	
 	def budget_between(self,startdate,enddate,global_startdate=None):

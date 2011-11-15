@@ -4,10 +4,8 @@ from django.conf import settings
 from openbudgetapp.models import Account
 
 urlpatterns = patterns('',
-
 (r'^$','openbudgetapp.views.index'),
-
-
+(r'^budget/(?P<startdate>\d+)/(?P<enddate>\d+)/(?P<depth>\d+)/(?P<method>\w+)/$','openbudgetapp.views.index'),
 
 )
 
