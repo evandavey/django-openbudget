@@ -10,10 +10,10 @@ a:link[href^="http://"]:after, a[href^="http://"]:visited:after {content: " (" a
 a[href^="http://"] {color:#000;}
 
 /* Make budget tables smaller */
-table
+#budget
 {
 	font-size: 8px;
-	page-break-inside:avoid;
+	#page-break-inside:avoid;
 	page-break-after:always;
 	display:table-header-group;
 }

@@ -100,31 +100,31 @@
 	
 	{% for d in item.budget_data %}
 	{%if item.leaf%}
-   	 <td>{{d.actual}}</td>
+   	 
 		{%if a.type == 'E' %}
 			{%if d.vsbudget < threshold_over %}
-	 		<td class="over">{{d.budget}}</td>
+	 		<td class="over">{{d.actual}}</td>
 			{%else%}
 				{%if d.vsbudget > threshold_under %}
-				<td class="under">{{d.budget}}</td>
+				<td class="under">{{d.actual}}</td>
 				{%else%}
-					<td>{{d.budget}}</td> 
+					<td>{{d.actual}}</td> 
 				{%endif%}
 			{%endif%}
 		{%else%}
 			{%if a.type == 'I' %}
 				{%if d.vsbudget > threshold_under %}
-		 		<td class="over">{{d.budget}}</td>
+		 		<td class="over">{{d.actual}}</td>
 				{%else%}
 					{%if d.vsbudget < threshold_over %}
-					<td class="under">{{d.budget}}</td>
+					<td class="under">{{d.actual}}</td>
 					{%else%}
-						<td>{{d.budget}}</td>
+						<td>{{d.actual}}</td>
 					{%endif%}
 				{%endif%}
 			{%endif%}
 		{%endif%}
-		
+		<td>{{d.budget}}</td>
 	{%else%}
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>

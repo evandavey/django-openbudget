@@ -28,7 +28,7 @@ from fabric.colors import *
 
 
 env.project = 'openbudget'
-env.git_url = 'git://github.com/evandavey/OpenBudget.git'
+env.git_url = 'git://github.com/vanessacochrane/OpenBudget.git'
 
 
 
@@ -39,12 +39,6 @@ def _setup_path():
 	env.settings = '%(project)s.settings_%(environment)s' % env
 
 
-def localmachine():
-	env.environment = 'local'
-	env.serverport = '8081'
-	env.code_root = '.'
-	env.virtualenv_root = "~/.virtualenvs"
-
 def development():
 	""" Development settings.  Modify these to match your environment """
 	env.home = '/Users/evandavey/django-dev/'
@@ -52,7 +46,6 @@ def development():
 	env.hosts = ['localhost']
 	env.user = 'evandavey'
 	env.serverport = '8081'
-	env.git_branch = 'develop'
 	_setup_path()
 
 def staging():
@@ -63,16 +56,18 @@ def staging():
 	env.user = 'evandavey'
 	env.environment = 'staging'
 	env.hosts = ['192.168.0.20']
-	env.servername = 'openportfolio-staging.getoutsideandlive.com'
+	env.servername = 'openbudget-staging.getoutsideandlive.com'
 	_setup_path()
 
 
 def production():
 	env.home = '/usr/local/web/django'
+	env.apacheconfig = '/usr/local/web/config'
+	
 	env.user = 'evandavey'
 	env.environment = 'production'
-	env.hosts = ['192.168.0.21']
-	env.servername = 'openportfolio.getoutsideandlive.com'
+	env.hosts = ['192.168.0.20']
+	env.servername = 'openbudget.getoutsideandlive.com'
 	_setup_path()
 
 
@@ -85,15 +80,15 @@ def bootstrap():
 	create_virtualenv()
 	clone_remote()
 	update_requirements()
-	update_python_path()
 	syncdb()
 	migratedb()
+	collectstatic()
 	
 def create_virtualenv():
 	""" creates a virtual environment """
 	
 	print(green("Creating a virtual environment in %s" % env.virtualenv_root))
-	sudo('WORKON_HOME=%s' % (env.virtualenv_root) + ' && ' + 'source /usr/local/bin/virtualenvwrapper.sh && ' + 'mkvirtualenv %s' % (env.project),user=env.user)
+	sudo('WORKON_HOME=%s' % (env.virtualenv_root) + ' && ' + 'source /usr/local/bin/virtualenvwrapper.sh && ' + 'mkvirtualenv --no-site-packages %s' % (env.project),user=env.user)
 	
 
 def clone_remote():
@@ -103,17 +98,6 @@ def clone_remote():
 	
 	run('rm -rf %s' % os.path.join(env.root,env.project))
 	run('git clone %s %s/%s' % (env.git_url,env.root,env.project))
-	
-	with cd(env.code_root):
-		run('git checkout %s' % (env.git_branch))
-
-
-def update_python_path():
-
-	print(green("Updating python path %s" % env.root))
-	sys.path.insert(0,env.root) 
-
-
 
 
 def update_remote():
@@ -136,14 +120,13 @@ def update_requirements():
 	
 	print(green("Installing dependencies - this may take some time, please be patient"))
 	requirements = os.path.join(env.code_root, 'requirements')
-	with cd(requirements):
-		cmd = ['pip install']
-		#cmd +=['-q']
-		cmd += ['-r %s' % os.path.join(requirements, '%s.txt' % env.environment)]
-
-		with virtualenv():
-			run(' '.join(cmd))
+	requirements_file=get(os.path.join(requirements, '%s.txt' % env.environment))[0]
 	
+	with virtualenv():
+		## hack to overcome no order in requirements files	
+		for line in open(requirements_file, "r"): 
+			run("pip install %s" % (line))
+
 	
 def syncdb():
 	""" syncs the django database """
@@ -171,12 +154,24 @@ def runserver():
 
 	print(green('Running development server.  Access at http://127.0.0.1:%s' % env.serverport))
 
+	if env.environment == 'development':
+		local('./manage.py runserver 0.0.0.0:%s --settings=%s.settings_%s' % (env.serverport,env.project,env.environment))
+		return
+
 	with virtualenv():
 		with cd(env.code_root):
-			if env.environment != 'local':
-				run('./manage.py runserver 0.0.0.0:%s --settings=%s.settings_%s' % (env.serverport,env.project,env.environment))
-			else:
-				local('./manage.py runserver 0.0.0.0:%s --settings=%s.settings_%s' % (env.serverport,env.project,env.environment))
+			run('./manage.py runserver 0.0.0.0:%s --settings=%s.settings_%s' % (env.serverport,env.project,env.environment))
+
+
+def collectstatic():
+	""" collects static files """
+
+	print(green('Collecting static files'))
+
+	with virtualenv():
+		with cd(env.code_root):
+			run('./manage.py collectstatic --settings=%s.settings_%s' % (env.project,env.environment))
+
 
 	
 @_contextmanager
@@ -282,6 +277,8 @@ def create_osx_launchd_file():
 	print(green('Creating launchd files from templates'))
 
 	conf_template=os.path.join(env.code_root,'install','launchd-template.plist')
+	conf_template=get(conf_template)[0]
+	
 	conf=os.path.join(env.code_root,'install','org.%s-%s.update.plist' % (env.project,env.environment))
 
 	r={ 'project':env.project,
@@ -290,8 +287,8 @@ def create_osx_launchd_file():
 	}
 
 	print(red('Replacing %s and saving as %s' % (conf_template,conf)))
-	_open_file_and_replace(conf_template,conf,r)
-	
+	_open_file_and_replace(conf_template,conf_template + ".out",r)
+	put(conf_template+ ".out", conf, mode=0755)
 	
 def update_osx_launchd_file():
 	""" Moves project launchd file to /Library/LaunchDaemons """
@@ -322,8 +319,6 @@ def remove_osx_launchd_file():
 	sudo('rm %s' % (dest))
 	
 		
-		
-
 
 def _open_file_and_replace(src,dest,replace_dict):
 	""" replaces <key> in src with val from key,val of replace_dict with supplied values and saves as dest 

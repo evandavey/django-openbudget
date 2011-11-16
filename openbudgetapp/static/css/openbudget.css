@@ -439,7 +439,8 @@ h2 {
 
 #budget
 {
-	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	#font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 12px;
 	background: #fff;
 	margin: 45px;
@@ -457,7 +458,7 @@ h2 {
 
 #budget th
 {
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: normal;
 	color: #039;
 	padding: 10px 8px;
