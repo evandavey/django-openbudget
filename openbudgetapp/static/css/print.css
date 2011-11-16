@@ -1,0 +1,29 @@
+/*Reset Style*/
+body {margin:0; padding:0; line-height: 1.4em; word-spacing:1px; letter-spacing:0.2px; font: 13px Arial, Helvetica,"Lucida Grande", serif; color: #000;}
+
+/*Remove Element*/
+#header,#footer,#available {display:none;}
+
+/* Show URL */
+a:link, a:visited {background: transparent; color:#333; text-decoration:none;}
+a:link[href^="http://"]:after, a[href^="http://"]:visited:after {content: " (" attr(href) ") "; font-size: 11px;}
+a[href^="http://"] {color:#000;}
+
+/* Make budget tables smaller */
+#budget
+{
+	font-size: 8px;
+	#page-break-inside:avoid;
+	page-break-after:always;
+	display:table-header-group;
+}
+
+#budget caption
+{
+	font-size: 10px;
+}
+
+#budget th
+{
+	font-size: 10px;
+}

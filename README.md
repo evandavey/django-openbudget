@@ -49,7 +49,7 @@ Otherwise:
 	$  ./manage.py runserver 0.0.0.0:8080 --settings=openbudget.settings_local
 
 
-Access the server at: http://127.0.0.0.1:8080/admin/
+Access the admin interface at: http://127.0.0.0.1:8080/admin/
 
 ##Importing a gnucash file
 
@@ -57,6 +57,28 @@ Save your GNUCash file as a sqlite3 file.
 
 	$ ./manage.py gnucash-import <gnucash sql file> --settings=openbudget.settings_local
 	
+
+##Creating budgets
+
+*  Access the admin interface at: http://127.0.0.0.1:8080/admin/ and create or edit AccountBudget objects.
+
+*  Budgets are specified as a total value over a given period.
+
+*  Total amounts will be spread daily over a given analysis period for reporting eg: a yearly budget value will be converted to 365 daily values which will then be multiplied by the number of days in a given month for a monthly report
+
+##The Budget Report
+
+* Access at http://127.0.0.0.1:8080/openbudget/budget/<startdate>/<enddate>/<depth>/<freq>
+	
+* <startdate> and <enddate> specify the analysis period and should be in YYYYMMDD format
+
+* Depth specifies the depth of the account tree to report on.  
+
+* Freq will define the analysis grouping.  Use 'm' or monthly groups, 'q' for quarterly groups and 'y' for annual groups
+	
+* For best results, the report should be produced over 6 periods eg: 6 years or 6 quarters or 6 months
+
+
 
 # Dependencies
 

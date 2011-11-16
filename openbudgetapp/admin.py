@@ -29,10 +29,19 @@ class SplitAdmin(admin.ModelAdmin):
 	list_filter = []
 	ordering = []
 	search_fields = []
+	
+class AccountBudgetAdmin(admin.ModelAdmin):
+	""" Object to control the behaviour of the linked object in the Admin interface
+	"""
+	list_display = ['id','enddate','account','estimated','pctnondiscrentionary','value','actual']
+	list_filter = ['account','enddate']
+	ordering = ['enddate','account']
+	search_fields = []
 
 admin.site.register(Account,AccountAdmin)	
 admin.site.register(Transaction,TransactionAdmin)	
 admin.site.register(Split,SplitAdmin)	
+admin.site.register(AccountBudget,AccountBudgetAdmin)	
 
 
 
