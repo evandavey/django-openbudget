@@ -28,7 +28,7 @@ from fabric.colors import *
 
 
 env.project = 'openbudget'
-env.git_url = 'git://github.com/vanessacochrane/OpenBudget.git'
+env.git_url = 'git://github.com/evandavey/OpenBudget.git'
 
 
 
