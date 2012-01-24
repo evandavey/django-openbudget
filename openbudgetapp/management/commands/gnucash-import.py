@@ -15,7 +15,7 @@ class Command(BaseCommand):
 		if len(args) < 1:
 			raise CommandError('Requires arguments %s' % self.args)
 
-		gnucashdb=os.path.join(args[0])
+		gnucashdb=os.path.join('',args[0])
 
 		self.stdout.write('Reading gnucash file %s\n' % (gnucashdb))
 		
