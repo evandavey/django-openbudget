@@ -23,7 +23,7 @@ class Command(BaseCommand):
 		try:
 			conn = sqlite3.connect(gnucashdb)
 		except:
-			raise CommandError('db connection failed: %s\n%s' % (gnucashdb,sys.exc_info()[0]))	
+			raise CommandError('db connection failed: %s\n%s' % (gnucashdb,sys.exc_info()[1]))	
 		
 		conn.row_factory = sqlite3.Row
 		
