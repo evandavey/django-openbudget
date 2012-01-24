@@ -142,6 +142,7 @@ def report(request,enddate=None,startdate=None,format='html'):
 	        print "...start=%.2f,interest=%.2f" % (start,interest)
 	        r=interest/start
 	    except:
+	        print 'oops'
 	        import sys
 	        print '...error calculating %s' % sys.exec_info()[1]
 	        r=0
