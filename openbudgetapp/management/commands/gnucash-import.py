@@ -3,6 +3,7 @@ from openbudgetapp.models import *
 import sqlite3
 from datetime import *
 import os
+import sys
 
 	
 	
@@ -22,7 +23,7 @@ class Command(BaseCommand):
 		try:
 			conn = sqlite3.connect(gnucashdb)
 		except:
-			raise CommandError('db connection failed: %s' % gnucashdb)	
+			raise CommandError('db connection failed: %s\n%s' % (gnucashdb,sys.exc_info()[0])	
 		
 		conn.row_factory = sqlite3.Row
 		
