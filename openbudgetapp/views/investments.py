@@ -142,7 +142,7 @@ def report(request,enddate=None,startdate=None,format='html'):
 	        r=1
 	    except:
 	        import sys
-	        print '...error calculating %s' % sys.exec_info()[1] 
+	        print '...error calculating %s' % sys.exc_info()[1] 
 	        r=0
 	    if r:
 	        print '...effective rate %.2f' % r
