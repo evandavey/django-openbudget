@@ -130,9 +130,10 @@ def report(request,enddate=None,startdate=None,format='html'):
 	for i in ib.filter(account_type='BANK'):
 	    print 'calculating interest for %s' % i.name
 	    start=sum_accounts([i],None,startdate)
+	    print 'here'
 	    end=sum_accounts([i],None,enddate)
 
-        print 'here'
+        
 	    interest=i.split_set.filter(tx__description__contains='INTEREST').timeseries()
 	    startdate+timedelta(days=5)
 	    
