@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from openbudgetapp.models import *
 import sqlite3
 from datetime import *
+import os
 
 	
 	
@@ -14,7 +15,7 @@ class Command(BaseCommand):
 		if len(args) < 1:
 			raise CommandError('Requires arguments %s' % self.args)
 
-		gnucashdb=args[0]
+		gnucashdb=os.path(args[0])
 
 		self.stdout.write('Reading gnucash file %s\n' % (gnucashdb))
 		
