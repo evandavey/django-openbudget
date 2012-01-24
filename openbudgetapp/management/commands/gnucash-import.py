@@ -64,17 +64,6 @@ class Command(BaseCommand):
 		
 		#second loop hack to make sure parents created first
 		
-		sql="""
-		select 
-			a.guid as aID,
-			a.name as aName,
-			a.account_type as aType,
-			a.parent_guid as pId
-
-		from accounts as a
-
-		"""
-		
 		c.execute(sql)
 
 		self.stdout.write('.Creating accounts\n')
