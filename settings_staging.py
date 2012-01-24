@@ -3,6 +3,8 @@ from openbudget.settings import *
 DEBUG = True
 
 
+GNUCASH_FILE = '/usr/local/web/django/www/staging/openbudget/gnucash.db'
+
 STATIC_ROOT = '/usr/local/web/django/www/staging/openbudget/static'
 
 TEMPLATE_DIRS = ('/usr/local/web/django/www/staging/openbudget/openbudgetapp/templates')

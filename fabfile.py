@@ -47,10 +47,11 @@ def development():
 
 def staging():
 	""" use staging environment on remote host"""
-
+	
+	env.user='evandavey'
 	env.environment = 'staging'
 	env.hosts = ['192.168.0.20']
-	env.servername = 'openbduget-staging.getoutsideandlive.com'
+	env.servername = 'openbudget-staging.getoutsideandlive.com'
 	env.branch = 'develop'
 	env.db = 'staging_openbudget'
 	env.db_user = 'openbudget'
