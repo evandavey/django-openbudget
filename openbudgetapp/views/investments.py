@@ -135,12 +135,11 @@ def report(request,enddate=None,startdate=None,format='html'):
 
         
 	    interest=i.split_set.filter(tx__description__contains='INTEREST').timeseries()
-	    startdate+timedelta(days=5)
-	    
-	   
+	    	   
 	    try:
-	        interest=interest[(interest.index>startdate+timedelta(days=5)) & (interest.index<enddate+timedelta(days=5))].sum()
-            r=interest/start
+	        #interest=interest[(interest.index>startdate+timedelta(days=5)) & (interest.index<enddate+timedelta(days=5))].sum()
+            #r=interest/start
+            r=1
         except:
             print '...error calculating' 
             r=0
