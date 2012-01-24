@@ -16,7 +16,7 @@ URLS - Investment
 urlpatterns += patterns('openbudgetapp.views.investments',
 
   
-  (r'^investments/report/(?:(?P<enddate>\d+)/(?P<startdate>\d+)/)?$',
+  (r'^investments/report/(?:(?P<enddate>\d+)/(?P<startdate>\d+)/(?P<format>\w+)/)?$',
 		'report',
 		None,
 		'investment_report'),
