@@ -140,7 +140,6 @@ def report(request,enddate=None,startdate=None,format='html'):
 	   
 	    try:
 	        interest=interest[(interest.index>startdate+timedelta(days=5)) & (interest.index<enddate+timedelta(days=5))].sum()
-            print "...start=%.2f,interest=%.2f" % (start,interest)
             r=interest/start
         except:
             print '...error calculating' 
