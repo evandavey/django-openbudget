@@ -133,7 +133,7 @@ def report(request,enddate=None,startdate=None,format='html'):
 	    end=sum_accounts([i],None,enddate)
 
         
-	    interest=i.split_set.filter(tx__description__contains='INTEREST').timeseries()
+	    interest=i.split_set.filter(tx__description__contains='Interest').timeseries()
 	    print interest
 	    try:
 	        interest=interest[(interest.index>startdate+timedelta(days=5)) & (interest.index<enddate+timedelta(days=5))].sum()
