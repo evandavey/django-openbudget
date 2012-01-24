@@ -1,9 +1,12 @@
 from django.db import models
 from openbudgetapp.models.split import Split
-# Create your models here.
 import pandas as ps
 from decimal import Decimal
+from django.db.models.query import QuerySet
 
+
+
+  
 class AccountBudget(models.Model):
 
 	class Meta: 
@@ -18,6 +21,8 @@ class AccountBudget(models.Model):
 	note=models.TextField(null=True,blank=True)
 	estimated=models.BooleanField(default=True)
 	pctnondiscrentionary=models.FloatField(default=1.00,verbose_name='Non Discrentionary %')
+
+	    	    
 	
 	@property
 	def timeseries(self):

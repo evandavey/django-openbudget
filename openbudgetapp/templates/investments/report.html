@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load pyformat %}
+
+{% block extra_scripts %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/investment-report.css" type="text/css" media="screen"/>
+
+{% endblock %}
+{% block title %}Investment Report{% endblock %}
+{% block content %}
+
+{{html|safe}}
+
+{% endblock content %}

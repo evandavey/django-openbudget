@@ -2,6 +2,8 @@ from django.core.management.base import BaseCommand, CommandError
 from openbudgetapp.models import *
 import sqlite3
 from datetime import *
+import os
+import sys
 
 	
 	
@@ -14,14 +16,14 @@ class Command(BaseCommand):
 		if len(args) < 1:
 			raise CommandError('Requires arguments %s' % self.args)
 
-		gnucashdb=args[0]
+		gnucashdb=os.path.join('',args[0])
 
 		self.stdout.write('Reading gnucash file %s\n' % (gnucashdb))
 		
 		try:
 			conn = sqlite3.connect(gnucashdb)
 		except:
-			raise CommandError('db connection failed: %s' % gncashdb)	
+			raise CommandError('db connection failed: %s\n%s' % (gnucashdb,sys.exc_info()[1]))	
 		
 		conn.row_factory = sqlite3.Row
 		
@@ -56,21 +58,25 @@ class Command(BaseCommand):
 			a.guid=r['aId']
 			a.name=r['aName']
 			a.account_type=r['aType']
-			a.parent_id=r['pId']
+			#a.parent_id=r['pId']
 			a.save()
 		
 		
-			sql="""
-			select 
-				a.guid as aID,
-				a.name as aName,
-				a.account_type as aType,
-				a.parent_guid as pId
+		#second loop hack to make sure parents created first
+		
+		c.execute(sql)
 
-			from accounts as a
+		self.stdout.write('.Creating accounts\n')
+		for r in c:
 
-			"""
+			try:
+				a=Account.objects.get(pk=r['aId'])
+				a.parent_id=r['pId']
+				a.save()
+			except:
+			    pass
 
+			
 		
 		self.stdout.write('.Clearing old Transactions\n')
 		Transaction.objects.all().delete()
@@ -104,7 +110,7 @@ class Command(BaseCommand):
 		sql="""
 		select 
 			s.guid as sID,
-			s.quantity_num/s.quantity_denom as sValue,
+			cast(s.quantity_num as float)/cast(s.quantity_denom as float) as sValue,
 			s.tx_guid as tID,
 			s.account_guid as aID
 

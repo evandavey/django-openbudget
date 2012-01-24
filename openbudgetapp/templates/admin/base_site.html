@@ -1,0 +1,15 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+{% block extrastyle %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/admin/openbudget.css" type="text/css" media="screen"/>
+{% endblock %}
+
+{% block title %}{{ title }} | {% trans 'Open Budget' %}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">{% trans 'Open Budget' %}</h1>
+{% endblock %}
+
+{% block nav-global %}
+{% endblock %}
+

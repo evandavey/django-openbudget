@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load pyformat %}
+
+
+{% block title %}Budget Report{% endblock %}
+{% block content %}
+
+<table id="budget">
+<thead>
+<tr>
+<th>&nbsp;</th>
+{% for k in group_labels %}
+<th scope="col" colspan="2">{{k|date:"M Y"}}</th>
+{% endfor %}
+<th cope="col" colspan="2"><b>TOTAL</b></th>
+</tr>
+<tr>
+<th>&nbsp;</th>
+{% for k in group_labels %}
+<th>Actual</th>
+<th>Budget</th>
+{% endfor %}
+<th>Actual</th>
+<th>Budget</th>
+</tr>
+
+</thead>
+<tbody>
+
+{% for a,x in data.items %}
+{%if a != "total" %}
+<tr>
+	
+	<td>{{a.name}}</td>
+	{% for g,d in x.items %}
+	{% if g != "total" %}
+	<td>{% pyformat d.actual "{0:.0f}" %}</td>
+	<td>{% pyformat d.budget "{0:.0f}" %}</td>
+	{% endif %}
+	{%if forloop.last %}
+	<td><b>{% pyformat x.total.actual "{0:.0f}" %}</b></td>
+	<td><b>{% pyformat x.total.budget "{0:.0f}" %}</b></td>
+	{%endif %}
+	{% endfor %}
+</tr>
+{% endif %}
+{%if forloop.last %}
+</tbody>
+<tfoot>
+<tr>
+	<td>TOTAL</td>
+	{% for g,d in data.total.items %}
+	<td>{% pyformat d.actual "{0:.0f}" %}</td>
+	<td>{% pyformat d.budget "{0:.0f}" %}</td>
+	{% endfor %}
+	
+</tr>
+</tfoot>
+
+{% endif %}
+
+
+{% endfor %}
+</table>
+
+
+
+{% endblock %}
