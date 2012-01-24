@@ -139,6 +139,8 @@ def report(request,enddate=None,startdate=None,format='html'):
 	        #cashflows=i.split_set.all().exclude(tx__description__contains='INTEREST').timeseries().sum()
 	        r=interest/start
 	    except:
+	        import sys
+	        print '...error calculating %s' % sys.exec_info()[1]
 	        r=0
 	        
 	    if r:
