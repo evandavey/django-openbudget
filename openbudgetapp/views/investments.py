@@ -133,12 +133,10 @@ def report(request,enddate=None,startdate=None,format='html'):
 	    end=sum_accounts([i],None,enddate)
 
         
-	    interest=i.split_set.filter(tx__description__contains='Interest').timeseries()
-	    print interest
+	    interest=i.split_set.filter(tx__description__icontains='Interest').timeseries()
 	    try:
 	        interest=interest[(interest.index>startdate+timedelta(days=5)) & (interest.index<enddate+timedelta(days=5))].sum()
 	        r=interest/start
-	        r=1
 	    except:
 	        import sys
 	        print '...error calculating %s' % sys.exc_info()[1] 
