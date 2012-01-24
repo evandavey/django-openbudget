@@ -135,21 +135,17 @@ def report(request,enddate=None,startdate=None,format='html'):
 	    interest=i.split_set.filter(tx__description__contains='INTEREST').timeseries()
 	    startdate+timedelta(days=5)
 	    
-	    
 	    try:
 	        interest=interest[(interest.index>startdate+timedelta(days=5)) & (interest.index<enddate+timedelta(days=5))].sum()
-	        #cashflows=i.split_set.all().exclude(tx__description__contains='INTEREST').timeseries().sum()
-	        print "...start=%.2f,interest=%.2f" % (start,interest)
-	        r=interest/start
-	    except:
-	        print 'oops'
-	        import sys
-	        print '...error calculating %s' % sys.exec_info()[1]
-	        r=0
-	        
-	    if r:
-	        print '...effective rate %.2f' % r
-	        i_data.append({'account':i.name,'interest':interest,'rate':r*400,'start':start,'end':end})
+            print "...start=%.2f,interest=%.2f" % (start,interest)
+            r=interest/start
+        except:
+            print '...error calculating' 
+            r=0
+
+        if r:
+            print '...effective rate %.2f' % r
+            i_data.append({'account':i.name,'interest':interest,'rate':r*400,'start':start,'end':end})
 	    
 
    
