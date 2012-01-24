@@ -11,7 +11,7 @@ import datetime
 #management.call_command('loaddata', 'test_data', verbosity=0)
 
 
-
+@login_required(login_url='/accounts/login')
 def gnucash_import(request):
     
     dbfile = getattr(settings, 'GNUCASH_FILE', None)
