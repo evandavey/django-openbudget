@@ -3,3 +3,4 @@ south
 pyYAML
 numpy
 pandas
+mysql-python
