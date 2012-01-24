@@ -141,7 +141,8 @@ def report(request,enddate=None,startdate=None,format='html'):
 	        r=interest/start
 	        r=1
 	    except:
-	        print '...error calculating' 
+	        import sys
+	        print '...error calculating %s' % sys.exec_info()[1] 
 	        r=0
 	    if r:
 	        print '...effective rate %.2f' % r
