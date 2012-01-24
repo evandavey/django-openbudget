@@ -9,3 +9,6 @@ distribute-*
 *.pyc
 *.swp
 192*
+tagger/*
+openbudgetapp/management/commands/tagger-export.py
+openbudgetapp/utils/export.py

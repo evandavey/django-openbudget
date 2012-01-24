@@ -104,7 +104,7 @@ class Command(BaseCommand):
 		sql="""
 		select 
 			s.guid as sID,
-			s.quantity_num/s.quantity_denom as sValue,
+			cast(s.quantity_num as float)/cast(s.quantity_denom as float) as sValue,
 			s.tx_guid as tID,
 			s.account_guid as aID
 
