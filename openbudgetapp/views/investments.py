@@ -163,7 +163,6 @@ def report(request,enddate=None,startdate=None,format='html'):
 	ib_data['return_pa']=ib_data['return']*4
 	
 	for x in i_data:
-	    print '...weight calcs'
 	    x['Ws']=(x['end']/ib_data['end'])*100
         
 
