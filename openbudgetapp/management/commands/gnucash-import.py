@@ -58,21 +58,37 @@ class Command(BaseCommand):
 			a.guid=r['aId']
 			a.name=r['aName']
 			a.account_type=r['aType']
-			a.parent_id=r['pId']
+			#a.parent_id=r['pId']
 			a.save()
 		
 		
-			sql="""
-			select 
-				a.guid as aID,
-				a.name as aName,
-				a.account_type as aType,
-				a.parent_guid as pId
+		#second loop hack to make sure parents created first
+		
+		sql="""
+		select 
+			a.guid as aID,
+			a.name as aName,
+			a.account_type as aType,
+			a.parent_guid as pId
 
-			from accounts as a
+		from accounts as a
 
-			"""
+		"""
+		
+		c.execute(sql)
 
+		self.stdout.write('.Creating accounts\n')
+		for r in c:
+
+			try:
+				a=Account.objects.get(pk=r['aId'])
+			    a.parent_id=r['pId']
+    			a.save()
+                
+			except:
+				pass
+
+			
 		
 		self.stdout.write('.Clearing old Transactions\n')
 		Transaction.objects.all().delete()
