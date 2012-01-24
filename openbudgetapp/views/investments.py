@@ -128,6 +128,7 @@ def report(request,enddate=None,startdate=None,format='html'):
 	
 	i_data=[]
 	for i in ib.filter(account_type='BANK'):
+	    print 'calculating interest for %s' % i.name
 	    start=sum_accounts([i],None,startdate)
 	    end=sum_accounts([i],None,enddate)
 
@@ -144,7 +145,7 @@ def report(request,enddate=None,startdate=None,format='html'):
 	        i_data.append({'account':i.name,'interest':interest,'rate':r*400,'start':start,'end':end})
 	    
 
-    print i_data
+   
 	
 	ib_data={
 	    'income':sum_accounts(ib.filter(account_type='INCOME'),startdate,enddate,True),
