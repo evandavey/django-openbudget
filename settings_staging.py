@@ -5,6 +5,9 @@ DEBUG = True
 
 STATIC_ROOT = '/usr/local/web/django/www/staging/openbudget/static'
 
+TEMPLATE_DIRS = ('/usr/local/web/django/www/staging/openbudget/openbudgetapp/templates')
+
+
 DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = 'staging_openbudget'             # Or path to database file if using sqlite3.
 DATABASE_USER = 'openbudget'             # Not used with sqlite3.
