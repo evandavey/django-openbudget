@@ -314,7 +314,7 @@ def report(request,enddate=None,startdate=None,format='html'):
 	    
 	else:
 	    
-	    process = subprocess.Popen(['multimarkdown'], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+	    process = subprocess.Popen(['/usr/local/bin/multimarkdown'], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 	
     	process.stdin.write(markdown)
 	
