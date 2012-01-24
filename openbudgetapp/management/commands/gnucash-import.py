@@ -71,11 +71,10 @@ class Command(BaseCommand):
 
 			try:
 				a=Account.objects.get(pk=r['aId'])
-			    a.parent_id=r['pId']
-    			a.save()
-                
+				a.parent_id=r['pId']
+				a.save()
 			except:
-				pass
+			    pass
 
 			
 		
