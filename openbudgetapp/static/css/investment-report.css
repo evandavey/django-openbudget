@@ -168,9 +168,7 @@ UL, BODY DIR, BODY MENU {
 	border: 1px solid #ccc;
 }
 
-@media screen {  /* hide from IE3 */
-	a[href]:hover { background: #ffa }
-}
+
 
 BLOCKQUOTE.NOTE {
 	color: #222;
