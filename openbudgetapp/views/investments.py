@@ -304,18 +304,25 @@ def report(request,enddate=None,startdate=None,format='html'):
 	
 	}
 	
+	
+	"""
+	Template is in markdown format so we need to render it then convert to html
+	"""
+	
 	import subprocess
 
 	markdown=render_to_string('investments/report.md',ct,context_instance=RequestContext(request))
 	
 	if format=='md':
+	    #Just return the rendered markdown template
 	    response = HttpResponse(mimetype='application/txt')
 	    response['Content-Disposition'] = 'attachment; filename=report.md'
 	    response.write(markdown)
 	    return response
 	    
 	else:
-	    
+	    #Convert the template to html for site display
+	    #requires multimarkdown installed on host system (on osx using Homebrew: brew install multimarkdown)
 	    process = subprocess.Popen(['/usr/local/bin/multimarkdown'], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 	
     	process.stdin.write(markdown)
