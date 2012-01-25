@@ -1,6 +1,7 @@
 django
 south
 pyYAML
+mysql-python
 numpy
 pandas
-mysql-python
+beautifulsoup

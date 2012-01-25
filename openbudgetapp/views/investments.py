@@ -329,6 +329,13 @@ def report(request,enddate=None,startdate=None,format='html'):
 	
     	report_html=process.communicate()[0]
     	
+        from BeautifulSoup import BeautifulSoup   
+        
+        soup=BeautifulSoup(report_html)
+        
+        report_html=str(soup.body)
+        report_html=report_html.replace('<body>','').replace('</body>','')
+         	
     	report_html='<div id="investment-report">'+report_html+'</div>'
 	
     	ct={'html':report_html,

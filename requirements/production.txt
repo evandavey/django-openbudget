@@ -4,3 +4,4 @@ pyYAML
 mysql-python
 numpy
 pandas
+beautifulsoup
