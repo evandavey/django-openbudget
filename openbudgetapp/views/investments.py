@@ -128,23 +128,25 @@ def report(request,enddate=None,startdate=None,format='html'):
 	
 	i_data=[]
 	for i in ib.filter(account_type='BANK'):
+	    print 'calculating interest for %s' % i.name
 	    start=sum_accounts([i],None,startdate)
 	    end=sum_accounts([i],None,enddate)
 
-	    interest=i.split_set.filter(tx__description__contains='INTEREST').timeseries()
-	    startdate+timedelta(days=5)
+        
+	    interest=i.split_set.filter(tx__description__icontains='Interest').timeseries()
 	    try:
 	        interest=interest[(interest.index>startdate+timedelta(days=5)) & (interest.index<enddate+timedelta(days=5))].sum()
-	        #cashflows=i.split_set.all().exclude(tx__description__contains='INTEREST').timeseries().sum()
 	        r=interest/start
 	    except:
+	        import sys
+	        print '...error calculating %s' % sys.exc_info()[1] 
 	        r=0
-	        
 	    if r:
+	        print '...effective rate %.2f' % r
 	        i_data.append({'account':i.name,'interest':interest,'rate':r*400,'start':start,'end':end})
 	    
 
-
+   
 	
 	ib_data={
 	    'income':sum_accounts(ib.filter(account_type='INCOME'),startdate,enddate,True),
@@ -302,19 +304,26 @@ def report(request,enddate=None,startdate=None,format='html'):
 	
 	}
 	
+	
+	"""
+	Template is in markdown format so we need to render it then convert to html
+	"""
+	
 	import subprocess
 
 	markdown=render_to_string('investments/report.md',ct,context_instance=RequestContext(request))
 	
 	if format=='md':
+	    #Just return the rendered markdown template
 	    response = HttpResponse(mimetype='application/txt')
 	    response['Content-Disposition'] = 'attachment; filename=report.md'
 	    response.write(markdown)
 	    return response
 	    
 	else:
-	    
-	    process = subprocess.Popen(['multimarkdown'], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+	    #Convert the template to html for site display
+	    #requires multimarkdown installed on host system (on osx using Homebrew: brew install multimarkdown)
+	    process = subprocess.Popen(['/usr/local/bin/multimarkdown'], shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 	
     	process.stdin.write(markdown)
 	

@@ -1,5 +1,5 @@
 {% load pyformat %}Title: Investment Portfolio Report
-Date: <report_date>
+Date: {{end_dt|date:"d/m/Y"}}
 css: /Users/evandavey/Dropbox/Cochrane Davey/Business Enterprise/Marketing/Brand/Stylesheets/documentation-policy.css
 
 #Investment Report ({{start_dt|date:"d/m/Y"}} to {{end_dt|date:"d/m/Y"}})
