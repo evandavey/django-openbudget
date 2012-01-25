@@ -328,6 +328,8 @@ def report(request,enddate=None,startdate=None,format='html'):
     	process.stdin.write(markdown)
 	
     	report_html=process.communicate()[0]
+    	
+    	report_html='<div id="investment-report">'+report_html+'</div>'
 	
     	ct={'html':report_html,
 		
