@@ -16,20 +16,37 @@ URLS - Investment
 urlpatterns += patterns('openbudgetapp.views.investments',
 
   
-  (r'^investments/report/(?:(?P<enddate>\d+)/(?P<startdate>\d+)/(?P<format>\w+)/)?$',
+  (r'^(?P<accountset_id>\d+)/investments/report/(?:(?P<enddate>\d+)/(?P<startdate>\d+)/(?P<format>\w+)/)?$',
 		'report',
 		None,
 		'investment_report'),
 )
 
 """
+URLS - Business
+"""
+urlpatterns += patterns('openbudgetapp.views.business',
+
+  
+  (r'^(?P<accountset_id>\d+)/business/transaction_journal/?$',
+		'transaction_journal',
+		None,
+		'transaction_journal'),
+)
+
+"""
 URLS - Admin
 """
 urlpatterns += patterns('openbudgetapp.views.admin',
-  (r'^gnucash-import/$', 
+  (r'^gnucash-import/(?P<accountset_id>\d+)/$', 
   	'gnucash_import',
   	None,
   	'gnucash-import'),
+  	
+  	(r'^redmine-import/(?P<accountset_id>\d+)/$', 
+     	'redmine_import',
+     	None,
+     	'redmine-import'),
 )
 
 

@@ -1,13 +1,23 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from openbudgetapp.models import Account
+from openbudgetapp.models import Account,AccountSet
 from datetime import *
 from dateutil.relativedelta import relativedelta
 import pandas as ps
 import numpy as np
 from pandas.core.datetools import MonthEnd
 from decimal import Decimal
+from django.shortcuts import redirect
+
+
+from django.contrib.auth import logout
+
+def logout_view(request):
+    logout(request)
+    return redirect('/')
+    
+
 
 @login_required(login_url='/accounts/login/')
 def limited_object_detail(*args, **kwargs):
@@ -110,138 +120,43 @@ def budget_df(account,startdate=datetime(2011,1,1),enddate=datetime(2011,12,31))
 	
 
 
-def index(request,startdate=datetime(2011,6,1),enddate=datetime(2011,12,31),depth=3,method='m',threshold=-5):
+def index(request):
 	
-	iqs=Account.objects.filter(account_type='INCOME',parent__name='Income').order_by('name')
-	eqs=Account.objects.filter(account_type='EXPENSE',parent__name='Expenses').order_by('name')	
+    from openbudgetapp.forms import AccountSetForm
+    
+    accountsets=None
+    for g in request.user.groups.all():
+        if accountsets is None:
+            accountsets=g.accountset_set.all()
+        else:
+            accountsets = accountsets | g.accountset_set.all()
+        
+    
+    if request.method == 'POST': # If the form has been submitted...
+        form = AccountSetForm(accountsets,request.POST) # A form bound to the POST data
+        
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data
+            # ...
+            accset=form.cleaned_data['accountset']
+            
+            ct={'form':form,'accountset':accset}
+            return render_to_response('index.html',ct,context_instance=RequestContext(request))
+            
+    else:
+        form = AccountSetForm(accountsets) # An unbound form
 
-	depth=int(depth)
+    if accountsets:
+        accset=accountsets[0]
+    else:
+        accset=None
+        form=None
+        
+    ct={'form':form,'accountset':accset}
+    return render_to_response('index.html',ct,context_instance=RequestContext(request))
+    
+    
 
-	print "method: %s,depth %d" % (method,depth)
-				
-	income_list=list(get_account_nav(request,iqs,depth))
-	expense_list=list(get_account_nav(request,eqs,depth))
-	
-	account_type_list=[{'type':'I','label':'INCOME','list':income_list},{'type':'E','label':'EXPENSES','list':expense_list}]
-	
-	analysis_dates=ps.DateRange(startdate,enddate,offset=ps.DateOffset(days=1))
-	dates=[]
-	running_budget=Decimal(0)
-	running_actual=Decimal(0)
-	
-	data={}
-	for a in expense_list:
-	    if type(a) != str:
-	        
-	        df=a.dataframe
-	        
-	        if df is not None:
-	            df=df.reindex(analysis_dates)
-	            data[a]=df
-	    
-	p=ps.Panel(data,major_axis=analysis_dates)
-	
-	print p
-	
-	for a in account_type_list:
-		totals={}
-		for i in a['list']:
-			budget_data=[]
-			if type(i) != str:
-				
-				df=i.dataframe
-				
-				if df:
-				    df=df.reindex(analysis_dates)
-				
-				else:
-				    continue
-				
-				
-				#group the data frame for analysis
-				
-				if method=='m':
-					grouped=df.groupby(lambda x: datetime(x.year,x.month,1)+MonthEnd())
-				elif method=='q':
-					grouped=df.groupby(lambda x: datetime(x.year,(((x.month-1)//3)+1)*3,1)+MonthEnd())
-				else:
-					grouped=df.groupby(lambda x: datetime(x.year,12,31))
-				
-			
-				if len(dates)==0:
-					dates=sorted(grouped.groups.iterkeys())
-				
-						
-					
-				for (g,d) in grouped:
-					budget=round(d.budget.sum(),0)
-					actual=round(float(d.actual.sum()),0)
-					vsbudget=budget-float(actual)
-					
-					try:
-						totals[g]['budget']+=budget
-						totals[g]['actual']+=actual
-					except:
-						totals[g]={'budget':budget,'actual':actual}
-						
-					
-					budget_data.append({'budget':budget,'actual':actual,'vsbudget':vsbudget})
-				
-				running_budget+=Decimal(df['budget'].sum())
-				running_actual+=Decimal(df['actual'].sum())
-				
-				i.budget_sums={'vsbudget':round(float(df['actual'].sum())-float(df['budget'].sum()),0),'budget':round(df['budget'].sum(),0),'actual':round(float(df['actual'].sum()),0)}
-				i.budget_data=budget_data
-				#print grouped.sum()
-		
-		#sorting hack
-		a['totals']=[]
-		for d in dates:
-			actual=totals[d]['actual']
-			budget=totals[d]['budget']
-			
-			a['totals'].append({'budget':budget,'actual':actual,'vsbudget':actual-budget})
-			
-		a['budget_sums']={'vsbudget':round(float(running_actual)-float(running_budget),0),'budget':round(running_budget,0),'actual':round(float(running_actual),0)}
-	
-		
-	summary_totals=[]
-	for i in range(0,len(dates)):
-		summary_totals.append({'budget':0,'actual':0,'vsbudget':0})
-	
-	for a in account_type_list:
-		i=0
-	
-		for t in a['totals']:
-			if a['type']=='I':
-				summary_totals[i]['budget']+=t['budget']
-				summary_totals[i]['actual']+=t['actual']	
-			else:
-			
-				summary_totals[i]['budget']-=t['budget']
-				summary_totals[i]['actual']-=t['actual']
-				
-			summary_totals[i]['vsbudget']=summary_totals[i]['actual']-summary_totals[i]['budget']
-			i+=1
-			
-	summary_overall_total={'budget':0,'actual':0,'vsbudget':0}
-
-	for s in summary_totals:
-		summary_overall_total['budget']+=s['budget']
-		summary_overall_total['actual']+=s['actual']
-		summary_overall_total['vsbudget']+=s['actual']-s['budget']
-		
-		
-	ct={'account_type_list':account_type_list,
-		'dates': dates,
-		'summary_totals': summary_totals,
-		'summary_overall_total':summary_overall_total,
-		'threshold_over': threshold,
-		'threshold_under': -1*threshold,
-	
-	
-	}
-	return render_to_response('index.html',ct,context_instance=RequestContext(request))
 	
 	
 	

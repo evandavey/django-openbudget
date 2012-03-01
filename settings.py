@@ -1,5 +1,6 @@
 # Django settings for caktus_website project.
 
+LOGIN_REDIRECT_URL='/'
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -91,7 +92,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
 )
-
 
 
 
