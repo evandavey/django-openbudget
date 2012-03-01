@@ -1,0 +1,93 @@
+<html>
+<head>
+<style>
+table
+{
+
+        font-size: 12px;
+        background: #fff;
+        margin: 45px;
+        width: 480px;
+        border-collapse: collapse;
+}
+
+
+
+table caption
+{
+        font-size: 18px;
+        font-weight: bold;
+        #color: #039;
+}
+
+
+table td
+{
+        border-bottom: 1px solid #ccc;
+        color: #666;
+        white-space:nowrap;
+        padding: 6px 8px;
+        text-align: center;
+}
+
+table tbody tr:hover td
+{
+        color: #FA5858;
+}
+
+table tfoot
+{
+        font-weight: bold;
+        color: #666;
+        padding: 10px 8px;
+        border-top: 2px solid #6678b1;
+        border-bottom: 2px solid #6678b1;
+}
+
+table thead tr th
+{
+        font-size: 12px;
+        font-weight: normal;
+        color: #FFF;
+        padding: 5px 8px;
+        text-align: center;
+        background: #000;
+
+}
+</style>
+</head>
+<body>
+<table>
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>url</th>
+			<th>value</th>
+			<th>note</th>
+			<th>client</th>
+			<th>splits</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for r in receipts_list %}
+		<tr>
+			<td>{{r.id}}</td>
+			<td><a href="{{r.url}}">Download</a></td>
+			<td>{{r.total}}</td>
+			<td>{{r.note}}</td>
+			<td>{{r.client}}</td>
+			<td>
+			{% if r.tx %}
+			{% for s in r.tx.splits %}
+			{{s}}<br/>
+			{% endfor %}
+			{% else %}
+			&nbsp;
+			{% endif %}
+			</td>
+		</tr>
+{% endfor %}
+	</tbody>
+</table>
+</body>
+</html>

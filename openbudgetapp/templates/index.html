@@ -1,14 +1,38 @@
 {% extends "base.html" %}
-{% block title %}Open Portfolio{% endblock %}
+{% block title %}Home{% endblock %}
 {% block content %}
+
+
+{% if form %}
+<form action="/" method="post">{% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Submit" />
+</form>
+{%else %}
+You don't have any account sets</br>
+{%endif%}
+
 
 <h3>Welcome</h3>
 <p>Open Budget can be used to budget or report on a set of gnucash accounts.</p>
 
 <ul>
-<li>Generate a report for <a href="/openbudgetapp/investments/report">investments</a><br/></li>
+{% if accountset.style == "I" %}
+<li>Generate a report for <a href="/openbudgetapp/{{accountset.id}}/investments/report">investments</a><br/></li>
+{% endif %}
+{% if accountset.style == "B" %}
+<li>Generate a <a href="/openbudgetapp/{{accountset.id}}/business/transaction_journal">general journal report</a><br/></li>
+<li>Update <a href="/openbudgetapp/redmine-import/{{accountset.id}}">receipts</a><br/></li>
+
+{% endif %}
 <li>Access the <a href="/admin/openbudgetapp">administration panel</a></li>
-<li><a href="/openbudgetapp/gnucash-import/">Update</a> the database</li>
+<li><a href="/openbudgetapp/gnucash-import/{{accountset.id}}">Update</a> the database</li>
 
 </ul>
+
+{% if accountset %}
+Selected Account Set: {{accountset.name}}
+{%endif%}
+
+
 {% endblock %}

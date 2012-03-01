@@ -44,11 +44,13 @@ class Account(models.Model):
         ordering = ['name']
 
 
+    accountset=models.ForeignKey("AccountSet")
     guid=models.CharField(max_length=32,primary_key=True)
     name=models.CharField(max_length=2048)
     account_type=models.CharField(max_length=2048)
     parent=models.ForeignKey('self',null=True,related_name='child')
     objects=AccountManager()
+    code=models.CharField(max_length=20,null=True)
 
     @property
     def extras(self):

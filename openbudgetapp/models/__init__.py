@@ -4,3 +4,8 @@ from split import Split
 from accountbudget import AccountBudget
 from accountextra import AccountExtra
 from inflationrate import InflationRate
+from client import Client
+from receipt import Receipt
+from project import Project
+from receiptexpense import ReceiptExpense
+from accountset import AccountSet

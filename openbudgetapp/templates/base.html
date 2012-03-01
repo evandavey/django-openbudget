@@ -56,7 +56,7 @@
           Logged in as {{ user.username }} (<a href="/accounts/logout/">Log out</a>)
         {% else %}
 		  Login required 
-          <a href="accounts/login/?next={% ifequal request.path "/accounts/logout/" %}/{% else %}{{ request.path }}{% endifequal %}">Log in</a>
+          <a href="/accounts/login/?next={% ifequal request.path "/accounts/logout/" %}/{% else %}{{ request.path }}{% endifequal %}">Log in</a>
         {% endif %}
       </span>
 	

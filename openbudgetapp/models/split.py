@@ -25,18 +25,18 @@ class SplitQuerySet(QuerySet):
         
               
         r = np.core.records.fromrecords(vlqs, names=[f.name for f in self.model._meta.fields])
+
+
+        
+        #print [f.name for f in self.model._meta.fields]
         
         #note: this can contain duplicate dates
         df=ps.DataFrame(r,index=list(vldt))
+        df=df['value']
         
-        
-        #group by date,investment and portfolio to aggregate  **remove portfolio to overcome group portfolio issues
         df=df.groupby(lambda x: datetime(x.year,x.month,x.day)).sum()
-               
-       
-                    
-        ts=ps.TimeSeries(df['value'],index=df.index)
-        
+        ts=ps.TimeSeries(df,index=df.index)
+        #print ts
         return ts
 
 class SplitManager(models.Manager):
@@ -48,7 +48,8 @@ class Split(models.Model):
 
 	class Meta: 
 		app_label = 'openbudgetapp'
-
+		
+	accountset=models.ForeignKey("AccountSet")
 
 	guid=models.CharField(max_length=32,primary_key=True)
 	tx=models.ForeignKey("Transaction")
@@ -65,6 +66,25 @@ class Split(models.Model):
 	@property
 	def account_name(self):
 		return self.account.name
+		
+	@property
+	def db_or_cr(self):
+	    
+	    if self.account.account_type=='EXPENSE':
+	        if self.value>0:
+	            return "DB"
+	        else: 
+	            return "CR"
+	    else:
+	        if self.value<0:
+	            return "CR"
+	        else: 
+	            return "DB"
+	            
+	            
+	@property
+	def amt(self):
+	    return abs(self.value)
 	
 	@property
 	def description(self):
@@ -73,4 +93,4 @@ class Split(models.Model):
 	def __unicode__(self):
 		""" Returns the custom output string for this object
 		"""
-		return "%s %s %.2f" % (self.date,self.account_name,self.value) 
+		return "%s %s (%s) %.2f" % (self.date,self.account_name,self.account.account_type,abs(self.value)) 
