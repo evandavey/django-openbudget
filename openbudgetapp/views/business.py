@@ -16,4 +16,4 @@ def transaction_journal(request,accountset_id):
 
     }
 
-    return render_to_response('business/transactions.html',ct,context_instance=RequestContext(request))
+    return render_to_response('openbudgetapp/business/transactions.html',ct,context_instance=RequestContext(request))

@@ -316,7 +316,7 @@ def report(request,accountset_id,enddate=None,startdate=None,format='html'):
 	
 	import subprocess
 
-	markdown=render_to_string('investments/report.md',ct,context_instance=RequestContext(request))
+	markdown=render_to_string('openbudgetapp/investments/report.md',ct,context_instance=RequestContext(request))
 	
 	if format=='md':
 	    #Just return the rendered markdown template
@@ -347,7 +347,7 @@ def report(request,accountset_id,enddate=None,startdate=None,format='html'):
 		
     	}
 	
-    	return render_to_response('investments/report.html',ct,context_instance=RequestContext(request))
+    	return render_to_response('openbudgetapp/investments/report.html',ct,context_instance=RequestContext(request))
 	
 	
     
