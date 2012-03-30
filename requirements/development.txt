@@ -1,5 +1,0 @@
-django
-south
-pyYAML
-numpy
-pandas

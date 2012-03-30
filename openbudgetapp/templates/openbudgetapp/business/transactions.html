@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Investment Report{% endblock %}
+{% block content %}
+
+
+<table id="journal-table">
+	<thead>
+		<tr>
+			<th>Date</th>
+			<th>receipt url</th>
+			<th>splits</th>
+			<th>memo</th>
+			<th>receipt value</th>
+			<th>receipt note</th>
+			<th>client</th>
+			
+		</tr>
+	</thead>
+	<tbody>
+		{% for t in objlist %}
+		<tr>
+			<td>{{t.postdate|date:'d-M-Y'}}</td>
+			<td>{%if t.receipt.url %}<a href="{{t.receipt.url}}">Download</a>{%else%}{%if t.receipt_missing %}<strong>MISSING</strong>{%else%}&nbsp;{%endif%}{%endif%}</td>
+			<td>
+			{% for s in t.splits %}
+			{{s.account.account_type|lower|capfirst}}:{{s.account.name}} {{s.amt}} {{s.db_or_cr}}<br/>
+			{% endfor %}
+			</td>
+			<td>{{t.description}}</td>
+			<td>{{t.receipt.total}}</td>
+			<td>{{t.receipt.note}}</td>
+			<td>{{t.receipt.client}}</td>
+			
+		</tr>
+{% endfor %}
+	</tbody>
+</table>
+
+{% endblock content %}

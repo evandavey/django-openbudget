@@ -1,0 +1,18 @@
+<!ELEMENT receipt (client*,project*,url,note,expenses)>
+<!ATTLIST receipt id CDATA #REQUIRED date CDATA #REQUIRED>
+<!ELEMENT url (#PCDATA)>
+<!ELEMENT client EMPTY>
+<!ATTLIST client id CDATA #REQUIRED>
+<!ELEMENT project EMPTY>
+<!ATTLIST project id CDATA #REQUIRED>
+<!ELEMENT note (#PCDATA|location)*>
+<!ELEMENT location (#PCDATA)>
+<!ELEMENT expenses (expense+)>
+<!ELEMENT expense (#PCDATA)>
+<!ATTLIST 
+	expense allocation CDATA #REQUIRED 
+	reimbursable CDATA #REQUIRED 
+	vendor CDATA #REQUIRED
+	vat CDATA #IMPLIED
+	paidby CDATA #IMPLIED
+>

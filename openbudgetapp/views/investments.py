@@ -11,7 +11,7 @@ from datetime import *
 import pandas as ps
 import numpy as np
 from pandas.core.datetools import MonthEnd
-from openbudgetapp.models import Account,AccountExtra
+from openbudgetapp.models import Account,AccountExtra,AccountSet
 from decimal import *
 import urllib as u
 import string
@@ -28,6 +28,7 @@ share_data={
     'Wesfarmers':{'code':'WES.AX'},
     'Wesfarmers (N Class)':{'code':'WESN.AX'},
     'Woolworths':{'code':'WOW.AX'},
+    'Eldorado':{'code':'EAU.AX'}
 }
 
 
@@ -91,7 +92,10 @@ def find_share_price(dt,data):
 
 
 @login_required(login_url='/accounts/login')
-def report(request,enddate=None,startdate=None,format='html'):
+def report(request,accountset_id,enddate=None,startdate=None,format='html'):
+	
+	
+	accountset=AccountSet.objects.get(pk=accountset_id)
 	
 	if enddate is None:
 		enddate = datetime.today()
@@ -109,22 +113,22 @@ def report(request,enddate=None,startdate=None,format='html'):
 	
 	
 	data={
-	    'income':sum_accounts(Account.objects.filter(account_type='INCOME'),startdate,enddate,True),
-	    'expenses':sum_accounts(Account.objects.filter(account_type='EXPENSE'),startdate,enddate),
-	    'liabilities_start':sum_accounts(Account.objects.filter(account_type='LIABILITY'),None,startdate,True),
-	    'liabilities_end':sum_accounts(Account.objects.filter(account_type='LIABILITY'),None,enddate,True),
-	    'liabilities_yearstart':sum_accounts(Account.objects.filter(account_type='LIABILITY'),None,datetime(enddate.year,1,1),True),
-	    'income_ytd':sum_accounts(Account.objects.filter(account_type='INCOME'),datetime(enddate.year,1,1),enddate,True),
-    	'expenses_ytd':sum_accounts(Account.objects.filter(account_type='EXPENSE'),datetime(enddate.year,1,1),enddate),
-	    'contributions':sum_accounts(Account.objects.filter(account_type='EQUITY'),startdate,enddate,True),
-	    'contributions_ytd':sum_accounts(Account.objects.filter(account_type='EQUITY'),datetime(enddate.year,1,1),enddate,True),
+	    'income':sum_accounts(Account.objects.filter(account_type='INCOME',accountset=accountset),startdate,enddate,True),
+	    'expenses':sum_accounts(Account.objects.filter(account_type='EXPENSE',accountset=accountset),startdate,enddate),
+	    'liabilities_start':sum_accounts(Account.objects.filter(account_type='LIABILITY',accountset=accountset),None,startdate,True),
+	    'liabilities_end':sum_accounts(Account.objects.filter(account_type='LIABILITY',accountset=accountset),None,enddate,True),
+	    'liabilities_yearstart':sum_accounts(Account.objects.filter(account_type='LIABILITY',accountset=accountset),None,datetime(enddate.year,1,1),True),
+	    'income_ytd':sum_accounts(Account.objects.filter(account_type='INCOME',accountset=accountset),datetime(enddate.year,1,1),enddate,True),
+    	'expenses_ytd':sum_accounts(Account.objects.filter(account_type='EXPENSE',accountset=accountset),datetime(enddate.year,1,1),enddate),
+	    'contributions':sum_accounts(Account.objects.filter(account_type='EQUITY',accountset=accountset),startdate,enddate,True),
+	    'contributions_ytd':sum_accounts(Account.objects.filter(account_type='EQUITY',accountset=accountset),datetime(enddate.year,1,1),enddate,True),
 	}
 	
 	"""
 	Interest Bearing Accounts
 	"""
 	
-	ib=Account.objects.filter(accountextra__investment_category='INTEREST-BEARING')
+	ib=Account.objects.filter(accountextra__investment_category='INTEREST-BEARING',accountset=accountset)
 	
 	i_data=[]
 	for i in ib.filter(account_type='BANK'):
@@ -133,10 +137,10 @@ def report(request,enddate=None,startdate=None,format='html'):
 	    end=sum_accounts([i],None,enddate)
 
         
-	    interest=i.split_set.filter(tx__description__icontains='Interest').timeseries()
+	    interest=i.split_set.filter(tx__description__icontains='Interest',accountset=accountset).timeseries()
 	    try:
 	        interest=interest[(interest.index>startdate+timedelta(days=5)) & (interest.index<enddate+timedelta(days=5))].sum()
-	        r=interest/start
+	        r=float(interest)/float(start)
 	    except:
 	        import sys
 	        print '...error calculating %s' % sys.exc_info()[1] 
@@ -149,11 +153,11 @@ def report(request,enddate=None,startdate=None,format='html'):
    
 	
 	ib_data={
-	    'income':sum_accounts(ib.filter(account_type='INCOME'),startdate,enddate,True),
-	    'expenses':sum_accounts(ib.filter(account_type='EXPENSE'),startdate,enddate),
-	    'end':sum_accounts(ib.filter(account_type='BANK'),None,enddate),
-	    'start':sum_accounts(ib.filter(account_type='BANK'),None,startdate),
-	    'yearstart':sum_accounts(ib.filter(account_type='BANK'),None,datetime(enddate.year,1,1)),
+	    'income':sum_accounts(ib.filter(account_type='INCOME',accountset=accountset),startdate,enddate,True),
+	    'expenses':sum_accounts(ib.filter(account_type='EXPENSE',accountset=accountset),startdate,enddate),
+	    'end':sum_accounts(ib.filter(account_type='BANK',accountset=accountset),None,enddate),
+	    'start':sum_accounts(ib.filter(account_type='BANK',accountset=accountset),None,startdate),
+	    'yearstart':sum_accounts(ib.filter(account_type='BANK',accountset=accountset),None,datetime(enddate.year,1,1)),
 	 
 	    
 	}
@@ -170,13 +174,13 @@ def report(request,enddate=None,startdate=None,format='html'):
 	Share Accounts
 	"""
 	
-	s=Account.objects.filter(accountextra__investment_category='STOCK')
+	s=Account.objects.filter(accountextra__investment_category='STOCK',accountset=accountset)
 	
 	s_end=Decimal(0)
 	s_start=Decimal(0)
 	s_yearstart=Decimal(0)
     
-	for h in Account.objects.filter(account_type='STOCK'):
+	for h in Account.objects.filter(account_type='STOCK',accountset=accountset):
 	    
 	    print 'Revaluing %s at %s and %s' % (h.name,startdate,enddate)
 	    
@@ -202,6 +206,7 @@ def report(request,enddate=None,startdate=None,format='html'):
 	        pass
 	        
 	for k,x in share_data.iteritems():
+	    print k
 	    x['MV']=x['p_end']*x['h_end']
 	    x['Wp']=(x['MV'] / s_end)*100
 	    x['Rp']=(x['Wp']/100)*x['p_return']
@@ -209,10 +214,10 @@ def report(request,enddate=None,startdate=None,format='html'):
         
     
 	s_data={
-	    'income':sum_accounts(s.filter(account_type='INCOME'),startdate,enddate,True),
-	    'expenses':sum_accounts(s.filter(account_type='EXPENSE'),startdate,enddate),
-	    'income_ytd':sum_accounts(s.filter(account_type='INCOME'),datetime(enddate.year,1,1),enddate,True),
-    	'expenses_ytd':sum_accounts(s.filter(account_type='EXPENSE'),datetime(enddate.year,1,1),enddate),
+	    'income':sum_accounts(s.filter(account_type='INCOME',accountset=accountset),startdate,enddate,True),
+	    'expenses':sum_accounts(s.filter(account_type='EXPENSE',accountset=accountset),startdate,enddate),
+	    'income_ytd':sum_accounts(s.filter(account_type='INCOME',accountset=accountset),datetime(enddate.year,1,1),enddate,True),
+    	'expenses_ytd':sum_accounts(s.filter(account_type='EXPENSE',accountset=accountset),datetime(enddate.year,1,1),enddate),
 	    'end':s_end,
 	    'start':s_start,
 	    'yearstart':s_yearstart,
@@ -232,7 +237,7 @@ def report(request,enddate=None,startdate=None,format='html'):
 	Pension Accounts
 	"""
 	
-	p=Account.objects.filter(accountextra__investment_category='PENSION')
+	p=Account.objects.filter(accountextra__investment_category='PENSION',accountset=accountset)
 	
 	
 	p_data={
@@ -311,7 +316,7 @@ def report(request,enddate=None,startdate=None,format='html'):
 	
 	import subprocess
 
-	markdown=render_to_string('investments/report.md',ct,context_instance=RequestContext(request))
+	markdown=render_to_string('openbudgetapp/investments/report.md',ct,context_instance=RequestContext(request))
 	
 	if format=='md':
 	    #Just return the rendered markdown template
@@ -328,12 +333,21 @@ def report(request,enddate=None,startdate=None,format='html'):
     	process.stdin.write(markdown)
 	
     	report_html=process.communicate()[0]
+    	
+        from BeautifulSoup import BeautifulSoup   
+        
+        soup=BeautifulSoup(report_html)
+        
+        report_html=str(soup.body)
+        report_html=report_html.replace('<body>','').replace('</body>','')
+         	
+    	report_html='<div id="investment-report">'+report_html+'</div>'
 	
     	ct={'html':report_html,
 		
     	}
 	
-    	return render_to_response('investments/report.html',ct,context_instance=RequestContext(request))
+    	return render_to_response('openbudgetapp/investments/report.html',ct,context_instance=RequestContext(request))
 	
 	
     

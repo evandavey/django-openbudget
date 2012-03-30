@@ -8,15 +8,23 @@ import sys
 	
 	
 class Command(BaseCommand):
-	args = '<gnucash sqllite3 file>'
+	args = '<gnucash sqllite3 file> <account set id>'
 	help = 'Reads a gnucash sqlfile and imports its data into the budget app'
 
 	def handle(self, *args, **options):
 			
-		if len(args) < 1:
+		if len(args) < 2:
 			raise CommandError('Requires arguments %s' % self.args)
 
 		gnucashdb=os.path.join('',args[0])
+		accountset=args[1]
+		
+		try:
+		    accset=AccountSet.objects.get(pk=accountset)
+		    self.stdout.write(".Using %s\n" % accset.name)
+		except:
+		    raise CommandError('Could not find account set with id: %d\n%s' % (accountset,sys.exc_info()[1]))	
+		
 
 		self.stdout.write('Reading gnucash file %s\n' % (gnucashdb))
 		
@@ -39,7 +47,8 @@ class Command(BaseCommand):
 			a.guid as aID,
 			a.name as aName,
 			a.account_type as aType,
-			a.parent_guid as pId
+			a.parent_guid as pId,
+			a.code as aCode
 		
 		from accounts as a
 		
@@ -51,13 +60,15 @@ class Command(BaseCommand):
 		for r in c:
 			
 			try:
-				a=Account.objects.get(pk=r['aId'])
+				a=Account.objects.get(pk=r['aId'],accountset=accset)
 			except:
 				a=Account()
 			
+			a.accountset=accset
 			a.guid=r['aId']
 			a.name=r['aName']
 			a.account_type=r['aType']
+			a.code=r['aCode']
 			#a.parent_id=r['pId']
 			a.save()
 		
@@ -66,11 +77,11 @@ class Command(BaseCommand):
 		
 		c.execute(sql)
 
-		self.stdout.write('.Creating accounts\n')
+		self.stdout.write('.Adding account parent links\n')
 		for r in c:
 
 			try:
-				a=Account.objects.get(pk=r['aId'])
+				a=Account.objects.get(pk=r['aId'],accountset=accset)
 				a.parent_id=r['pId']
 				a.save()
 			except:
@@ -79,11 +90,12 @@ class Command(BaseCommand):
 			
 		
 		self.stdout.write('.Clearing old Transactions\n')
-		Transaction.objects.all().delete()
+		Transaction.objects.filter(accountset=accset).delete()
 		sql="""
 		select 
 			t.guid as tID,
 			t.post_date as tPostDate,
+			t.num as tNum,
 			t.description as tDescription
 			
 		from transactions as t
@@ -96,9 +108,14 @@ class Command(BaseCommand):
 		for r in c:
 
 			t=Transaction()
-
+			t.accountset=accset
 			t.guid=r['tId']
 			t.description=r['tDescription']
+			
+			try:
+			    t.num=int(r['tNum'])
+			except:
+			    t.num=None
 			
 			t.postdate=datetime.strptime(r['tPostDate'],"%Y%m%d%H%M%S")
 			
@@ -106,7 +123,7 @@ class Command(BaseCommand):
 
 
 		self.stdout.write('.Clearing old Splits\n')
-		Split.objects.all().delete()
+		Split.objects.filter(accountset=accset).delete()
 		sql="""
 		select 
 			s.guid as sID,
@@ -124,7 +141,7 @@ class Command(BaseCommand):
 		for r in c:
 
 			s=Split()
-
+			s.accountset=accset
 			s.guid=r['sId']
 			s.tx_id=r['tId']
 			s.account_id=r['aID']
