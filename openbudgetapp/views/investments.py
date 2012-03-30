@@ -28,6 +28,7 @@ share_data={
     'Wesfarmers':{'code':'WES.AX'},
     'Wesfarmers (N Class)':{'code':'WESN.AX'},
     'Woolworths':{'code':'WOW.AX'},
+    'Eldorado':{'code':'EAU.AX'}
 }
 
 
@@ -139,7 +140,7 @@ def report(request,accountset_id,enddate=None,startdate=None,format='html'):
 	    interest=i.split_set.filter(tx__description__icontains='Interest',accountset=accountset).timeseries()
 	    try:
 	        interest=interest[(interest.index>startdate+timedelta(days=5)) & (interest.index<enddate+timedelta(days=5))].sum()
-	        r=interest/start
+	        r=float(interest)/float(start)
 	    except:
 	        import sys
 	        print '...error calculating %s' % sys.exc_info()[1] 
