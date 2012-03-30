@@ -119,4 +119,5 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'openbudget.openbudgetapp',
     'south',
+    'tastypie',
 )

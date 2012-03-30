@@ -49,6 +49,20 @@ urlpatterns += patterns('openbudgetapp.views.admin',
      	'redmine-import'),
 )
 
+"""
+API
+"""
+from tastypie.api import Api
+from openbudgetapp.api import *
+
+v1_api = Api(api_name='v1')
+v1_api.register(TransactionResource(), canonical=True)
+v1_api.register(AccountSetResource(), canonical=True)
+
+urlpatterns += patterns('',
+    (r'^api/', include(v1_api.urls)),
+)
+
 
 
 if settings.DEBUG:

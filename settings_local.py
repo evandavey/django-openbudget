@@ -1,4 +1,3 @@
-from openbudget.settings import *
 import ldap
 from django_auth_ldap.config import LDAPSearch, PosixGroupType,GroupOfNamesType
 import logging
@@ -79,3 +78,7 @@ DEBUG = True
 
 DATABASE_ENGINE = 'sqlite3'
 DATABASE_NAME = 'openbudget.db'
+
+INSTALLED_APPS += (
+	'bankdownloads',
+)
