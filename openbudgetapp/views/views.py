@@ -153,7 +153,7 @@ def index(request):
         form=None
         
     ct={'form':form,'accountset':accset}
-    return render_to_response('index.html',ct,context_instance=RequestContext(request))
+    return render_to_response('openbudgetapp/index.html',ct,context_instance=RequestContext(request))
     
     
 
