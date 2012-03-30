@@ -1,7 +1,0 @@
-django
-south
-pyYAML
-mysql-python
-numpy
-pandas
-beautifulsoup
