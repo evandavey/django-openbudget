@@ -69,7 +69,7 @@ else:
     long_description = "See http://github.com/evandavey/django-openbudget"
 
 setup(
-    name = 'django-openbudgetapp',
+    name = 'django-openbudget',
     version=distmeta.__version__,
     description=distmeta.__doc__,
     author=distmeta.__author__,
