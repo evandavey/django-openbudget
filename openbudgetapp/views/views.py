@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from openbudgetapp.models import Account,AccountSet
+from openbudgetapp.models import Account,AccountSet, Transaction
 from datetime import *
 from dateutil.relativedelta import relativedelta
 import pandas as ps

@@ -62,6 +62,7 @@ for dirpath, dirnames, filenames in os.walk(src_dir):
             data_files.append([dirpath, [os.path.join(dirpath, f) for f in
                 filenames]])
 
+print data_files
 
 if os.path.exists("README.md"):
     long_description = codecs.open("README.md", "r", "utf-8").read()
