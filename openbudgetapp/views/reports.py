@@ -14,14 +14,14 @@ def budget_data(accounts,startdate,enddate,method):
 
     p=accounts.budgetpanel(startdate,enddate)
 
+    if enddate-startdate>timedelta(days=366*6):
+        raise Exception("Period too long, can only display a max of 6 years")
     #can only display 6 periods at a time
-    if enddate-startdate>timedelta(days=366):
+    elif enddate-startdate>timedelta(days=366):
         method='y'
     elif enddate-startdate>timedelta(days=190):
         method='q'
-    elif enddate-startdate>timedelta(days=366*6):
-        raise Exception("Period too long, can only display a max of 6 years")
-    
+
 
     #group the panel into analysis subperiods
     if method=='m':
