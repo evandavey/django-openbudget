@@ -100,6 +100,13 @@ def budget_data(accounts,startdate,enddate,method):
 def budget(request,accountset_id,startdate,enddate,depth,method):
 
 
+    try:
+        startdate=datetime.strftime('%Y%m%d',startdate)
+        enddate=datetime.strftime('%Y%m%d',enddate)
+        
+    except:
+        raise Exception('Error in date format, should be YYYYMMDD')
+
     account_type='EXPENSE'
     
     
