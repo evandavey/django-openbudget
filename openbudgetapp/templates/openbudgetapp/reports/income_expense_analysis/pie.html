@@ -10,6 +10,8 @@ $(document).ready(function() {
 	makechart();
 });
 	
+	
+{{data}}
 function makechart() {	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'chart',
@@ -43,7 +45,7 @@ function makechart() {	chart = new Highcharts.Chart({
 			type: 'pie',
 			name: 'Browser share',
 			data: [
-				{% for label,val in data.items%}
+				{% for label,val in data.items %}
 				{% if for.last %}
 					['{{label}}',  {{val}}]
 				{% else %}
