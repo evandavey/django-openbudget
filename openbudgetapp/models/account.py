@@ -212,7 +212,7 @@ class Account(models.Model):
         bs=self.budgets
         ts=self.timeseries
         
-        if not ts:
+        if ts is None or len(ts)==0:
             return None
         
 
