@@ -58,8 +58,19 @@ def income_expense_analysis(request,accountset_id):
         for i in gp:
             act=gp[i]['actual'].fillna(0).sum()
             bud=gp[i]['budget'].fillna(0).sum()
-            act_pct=float(act)/float(data['total'][g]['actual'])
-            bud_pct=float(act)/float(data['total'][g]['budget'])
+            
+            act_tot=float(data['total'][g]['actual'])
+            bud_tot=float(data['total'][g]['budget'])
+            
+            if act_tot:
+                act_pct=float(act)/act_tot
+            else:
+                act_pct=0
+                
+            if bud_tot:
+                bud_pct=float(act)/bud_tot
+            else:
+                bud_pct=0
             
             try:
                 data[i][g]={
