@@ -13,7 +13,7 @@ def income_expense_analysis(request,accountset_id):
 
     account_type='EXPENSE'
     
-    startdate=datetime(2011,12,31)
+    startdate=datetime(2011,12,1)
     enddate=datetime(2012,3,31)
     
     method='m'
@@ -40,33 +40,53 @@ def income_expense_analysis(request,accountset_id):
     data=SortedDict()
     data['total']=SortedDict()  
     
-    for (g,gp) in grouped:
-        group_labels.append(g)
-
-        for i in gp:
-            act=gp[i]['actual'].fillna(0).sum()
-            bud=gp[i]['budget'].fillna(0).sum()
-
-            try:
-                data[i][g]={'actual':act,'budget':bud}
-                data[i]['total']['actual']+=act
-                data[i]['total']['budget']+=bud
-            except:
-                data[i]=SortedDict()
-                data[i][g]={'actual':act,'budget':bud}
-                data[i]['total']={'actual':act,'budget':bud}
-
-
-
-        data['total'][g]={
-            'actual':gp.minor_xs('actual').fillna(0).sum().sum(),
-            'budget':gp.minor_xs('budget').fillna(0).sum().sum(),
-        }
-
+    #calculate overall period totals
     data['total']['total']={
         'actual': p.minor_xs('actual').fillna(0).sum().sum(),
         'budget': p.minor_xs('budget').fillna(0).sum().sum(),
     }
+    
+    for (g,gp) in grouped:
+        group_labels.append(g)
+        
+        #calculate subperiod totals
+        data['total'][g]={
+            'actual':gp.minor_xs('actual').fillna(0).sum().sum(),
+            'budget':gp.minor_xs('budget').fillna(0).sum().sum(),
+        }
+        
+        for i in gp:
+            act=gp[i]['actual'].fillna(0).sum()
+            bud=gp[i]['budget'].fillna(0).sum()
+            act_pct=act/data['total'][g]['actual']
+            bud_pct=act/data['total'][g]['budget']
+            
+            try:
+                data[i][g]={
+                            'actual':act,
+                            'budget':bud,
+                            'actual_pct':act_pct,
+                            'budget_pct':budget_pct,
+                }
+                
+                #category total for period
+                data[i]['total']['actual']+=act
+                data[i]['total']['budget']+=bud
+            except:
+                data[i]=SortedDict()
+                data[i][g]={
+                            'actual':act,
+                            'budget':bud,
+                            'actual_pct':act_pct,
+                            'budget_pct':budget_pct,
+                }
+                
+                
+                data[i]['total']={'actual':act,'budget':bud}
+
+
+      
+
 
     ct={
         'group_labels': group_labels,
