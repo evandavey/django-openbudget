@@ -1,5 +1,5 @@
 <table class="table table-condensed">
-	<caption>Actual vs Budget</caption>
+	<caption>Actual vs Budget ({{name}})</caption>
 	<tr>
 		<th>Actual</th>
 		<td>{{actual}}</td>
@@ -11,7 +11,13 @@
 	<tfoot>
 	<tr>
 		<th>Difference</th>
-		<td>{{vsbudget}}</td>
+		<td>
+		{% if vsbudget < 0 %}	
+			<span class="label label-error">{{vsbudget}}</span>
+		{% else %}	
+			<span class="label label-success">{{vsbudget}}</span>
+		{% endif %}
+		</td>
 	</tr>
 	</tfoot>
 	

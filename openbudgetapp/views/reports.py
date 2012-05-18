@@ -130,17 +130,35 @@ def income_expense_analysis(request,accountset_id):
         'actual': act_tot,
         'budget': bud_tot,
         'vsbudget': act_tot-bud_tot,
-
+        'name': 'overall',
     }
 
-
-
-    budget=render_to_string('openbudgetapp/reports/income_expense_analysis/budgetreport.html',ct,context_instance=RequestContext(request))
+    overall_budget=render_to_string('openbudgetapp/reports/income_expense_analysis/budgetreport.html',ct,context_instance=RequestContext(request))
     
+    actual=[]
+    budget=[]
+    for p,d in data['total'].iteritems:
+        if p != ['total']
+            actual.append(d['actual'])
+            budget.append(d['budget'])
+            
+    
+    ct={
+           'actual': actual,
+           'budget': budget,
+           'name': 'overall',
+           'id':'overallbarchart',
+           'group_lables':'group_labels'
+       }
+
+    overall_budget_chart=render_to_string('openbudgetapp/reports/income_expense_analysis/budgetbar.html',ct,context_instance=RequestContext(request))
+  
+  
   
     ct={
          'pie': pie,
-         'overall_budget_report': budget,
+         'overall_budget_report': overall_budget,
+         'overall_budget_chart': overall_budget_chart,
 
      }
     
