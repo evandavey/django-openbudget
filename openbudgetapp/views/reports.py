@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 import pandas as ps
 from pandas.core.datetools import MonthEnd
+from django.utils.datastructures import SortedDict
 
 
 
@@ -25,7 +26,6 @@ def budget_data(accounts,startdate,enddate,method):
       
     group_labels=[]
 
-    from django.utils.datastructures import SortedDict
     data=SortedDict()
     data['total']=SortedDict()  
     
@@ -106,15 +106,12 @@ def income_expense_analysis(request,accountset_id):
 
     #convert data into overall %
     
-    actual=[]
-    budget=[]
+    data=SortedDict()
     for l,a in data.iteritems():
-        actual.append(a['total']['actual'])
-        budget.append(a['total']['budget'])
-
+        data[l]=a['total']['actual']
+        
     ct={
-        'actual': actual,
-        'budget': budget,
+        'data': data,
         'name': 'Breakdown By Account',
 
     }

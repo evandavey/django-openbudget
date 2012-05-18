@@ -13,76 +13,45 @@ $(document).ready(function() {
 function makechart() {	chart = new Highcharts.Chart({
 		chart: {
 			renderTo: 'chart',
-			defaultSeriesType: 'line',
+			plotBackgroundColor: null,
+			plotBorderWidth: null,
+			plotShadow: false
 		},
-		
-		
 		title: {
-			text: '{{name}}',
-			x: -20 //center
+			text: '{{name}}'
 		},
-
-		subtitle: {
-			text: '',
-			x: -20
-		},
-
-		xAxis: {
-			maxZoom : 14 * 24 * 3600000 // fourteen days
-
-		},
-
-		rangeSelector: {
-	        selected: 4
-	    },
-		
-		yAxis: {
-			title: {
-				text: 'Return'
-			},
-			labels: {
-	    		formatter: function() {
-    			return (this.value > 0 ? '+' : '') + this.value + '%';
-    			}
-			},
-    		plotLines: [{
-	    		value: 0,
-	    		width: 2,
-	    		color: 'silver'
-	    	}]
-	    },
-		
-	
-		plotOptions: {
-		    	series: {
-		    		
-		    	}
-		},
-		
 		tooltip: {
-	    	pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}%</b><br/>',
-	    	yDecimals: 2
-	    },
-	
-		legend: {
-			layout: 'vertical',
-			align: 'right',
-			verticalAlign: 'top',
-			x: -10,
-			y: 100,
-			borderWidth: 0
+			formatter: function() {
+				return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';
+			}
 		},
-	
-		series: [
-			{name: 'actual',
-				//data: [1, 27, 34, 39, 46, 56]
-			data: [{{ actual|join:"," }}]
-			},
-			{name: 'budget',
-			//data: [1, 27, 34, 39, 46, 56]
-			data: [{{ budget|join:"," }}]
-			},
-		]
+		plotOptions: {
+			pie: {
+				allowPointSelect: true,
+				cursor: 'pointer',
+				dataLabels: {
+					enabled: true,
+					color: '#000000',
+					connectorColor: '#000000',
+					formatter: function() {
+						return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';
+					}
+				}
+			}
+		},
+		series: [{
+			type: 'pie',
+			name: 'Browser share',
+			data: [
+				{% for label,val in data.items%}
+				{% if for.last %}
+					['{{label}}',  {{val}}]
+				{% else %}
+					['{{label}}',  {{val}}],
+				{% endif %}
+				{% endfor %}
+			]
+		}]
 	});
 };
 
