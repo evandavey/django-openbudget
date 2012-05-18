@@ -238,7 +238,7 @@ def budget_report(request,startdate=datetime(2011,6,1),enddate=datetime(2011,12,
     
     }
     
-    return render_to_response('budgetreport.html',ct,context_instance=RequestContext(request))
+    return render_to_response('openbudgetapp/reports/income_expense_analysis/pie.html',ct,context_instance=RequestContext(request))
 	
     
         

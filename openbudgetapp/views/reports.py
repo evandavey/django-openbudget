@@ -13,6 +13,7 @@ def income_expense_analysis(request,accountset_id):
     startdate=datetime(2011,12,31)
     enddate=datetime(2012,3,31)
     
+    method='m'
     
     #load the budget panel
     accounts=Account.objects.filter(account_type=account_type,accountset_id=accountset_id)
