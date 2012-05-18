@@ -106,15 +106,14 @@ def income_expense_analysis(request,accountset_id):
 
     #convert data into overall %
     
-    data={}
+    chartdata={}
     for l,a in data.iteritems():
-        #data[l]=a['total']['actual']
-        data['testing']=1
+        chartdata[l]=a['total']['actual']
         
     
     
     ct={
-        'data': data,
+        'data': chartdata,
         'name': 'Breakdown By Account',
 
     }
