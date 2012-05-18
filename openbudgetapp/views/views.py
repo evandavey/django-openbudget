@@ -23,7 +23,7 @@ def journal(request,accountset_id):
     
     accountset=AccountSet.objects.get(pk=accountset_id)
 
-    transactions=Transaction.objects.filter(accountset=accountset)
+    transactions=Transaction.objects.filter(accountset=accountset).order_by('-postdate')
 
     ct={'transactions':transactions,
 
