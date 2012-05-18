@@ -12,11 +12,14 @@
 			{{t.description}}
 		</div>
 	</div>
-	{% for s in transactions.splits.all %}
+	{% for s in t.splits %}
 	
 	<div class="row">
-		<div class="span4 offset1">
-			{{s.account}}
+		<div class="span4 offset2">
+			{{s.account.name}}
+		</div>
+		<div class="span4">
+			{{s.account.amt}}
 		</div>
 	</div>
 	
