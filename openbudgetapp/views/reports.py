@@ -124,13 +124,10 @@ def income_expense_analysis(request,accountset_id):
         
     pie=render_to_string('openbudgetapp/reports/income_expense_analysis/pie.html',ct,context_instance=RequestContext(request))
 
-    act_tot=data['total']['total']['actual']
-    bud_tot=data['total']['total']['budget']
+
     ct={
-        'actual': act_tot,
-        'budget': bud_tot,
-        'vsbudget': act_tot-bud_tot,
-        'name': 'overall',
+        'data':data,
+        'group_labels': group_labels,
     }
 
     overall_budget=render_to_string('openbudgetapp/reports/income_expense_analysis/budgetreport.html',ct,context_instance=RequestContext(request))

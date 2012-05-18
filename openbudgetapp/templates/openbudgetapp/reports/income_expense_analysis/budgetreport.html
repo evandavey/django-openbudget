@@ -1,24 +1,58 @@
 <table class="table table-condensed">
-	<caption>Actual vs Budget ({{name}})</caption>
+	<caption>Actual vs Budget</caption>
+	<thead>
 	<tr>
-		<th>Actual</th>
-		<td>{{actual}}</td>
+	<th>&nbsp;</th>
+	{% for k in group_labels %}
+	<th scope="col" colspan="2">{{k|date:"M Y"}}</th>
+	{% endfor %}
+	<th cope="col" colspan="2"><b>TOTAL</b></th>
 	</tr>
 	<tr>
-		<th>Budget</th>
-		<td>{{budget}}</td>
+	<th>&nbsp;</th>
+	{% for k in group_labels %}
+	<th>Actual</th>
+	<th>Budget</th>
+	{% endfor %}
+	<th>Actual</th>
+	<th>Budget</th>
 	</tr>
+
+	</thead>
+	<tbody>
+
+	{% for a,x in data.items %}
+	{%if a != "total" %}
+	<tr>
+
+		<td>{{a.name}}</td>
+		{% for g,d in x.items %}
+		{% if g != "total" %}
+		<td>{% pyformat d.actual "{0:.0f}" %}</td>
+		<td>{% pyformat d.budget "{0:.0f}" %}</td>
+		{% endif %}
+		{%if forloop.last %}
+		<th>{% pyformat x.total.actual "{0:.0f}" %}</th>
+		<th>{% pyformat x.total.budget "{0:.0f}" %}</th>
+		{%endif %}
+		{% endfor %}
+	</tr>
+	{% endif %}
+	{%if forloop.last %}
+	</tbody>
 	<tfoot>
 	<tr>
-		<th>Difference</th>
-		<td>
-		{% if vsbudget < 0 %}	
-			<span class="label label-error">{{vsbudget}}</span>
-		{% else %}	
-			<span class="label label-success">{{vsbudget}}</span>
-		{% endif %}
-		</td>
+		<td>TOTAL</td>
+		{% for g,d in data.total.items %}
+		<td>{% pyformat d.actual "{0:.0f}" %}</td>
+		<td>{% pyformat d.budget "{0:.0f}" %}</td>
+		{% endfor %}
+
 	</tr>
 	</tfoot>
-	
+
+	{% endif %}
+
+
+	{% endfor %}
 </table>
