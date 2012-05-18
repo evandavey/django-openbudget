@@ -109,8 +109,9 @@ def income_expense_analysis(request,accountset_id):
     data={}
     for l,a in data.iteritems():
         data[l]=a['total']['actual']
+        data['testing']=1
         
-    data['testing']=1
+    
     
     ct={
         'data': data,
