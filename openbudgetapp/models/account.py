@@ -22,7 +22,7 @@ class AccountQuerySet(QuerySet):
 
                 if df is not None:
                     df=df.reindex(analysis_dates)
-                    data[a]=df
+                    data[a.name]=df
 
         p=ps.Panel(data,major_axis=analysis_dates)
 
