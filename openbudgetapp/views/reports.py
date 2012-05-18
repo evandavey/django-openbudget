@@ -7,19 +7,8 @@ import pandas as ps
 from pandas.core.datetools import MonthEnd
 
 
-@login_required(login_url='/accounts/login/')
-def income_expense_analysis(request,accountset_id):
 
-
-    account_type='EXPENSE'
-    
-    startdate=datetime(2011,12,1)
-    enddate=datetime(2012,3,31)
-    
-    method='m'
-    
-    #load the budget panel
-    accounts=Account.objects.filter(account_type=account_type,accountset_id=accountset_id)
+def budget_data(accounts,startdate,enddate,method):
 
 
     p=accounts.budgetpanel(startdate,enddate)
@@ -94,14 +83,39 @@ def income_expense_analysis(request,accountset_id):
                 
                 
                 data[i]['total']={'actual':act,'budget':bud}
+                
+                
+        return (data,group_labels)
 
 
-      
+@login_required(login_url='/accounts/login/')
+def income_expense_analysis(request,accountset_id):
 
+
+    account_type='EXPENSE'
+    
+    startdate=datetime(2011,12,1)
+    enddate=datetime(2012,3,31)
+    
+    method='m'
+    
+    #load the budget panel
+    accounts=Account.objects.filter(account_type=account_type,accountset_id=accountset_id)
+
+    data,group_labels=budget_data(accounts,startdate,enddate,method)
+
+    #convert data into overall %
+    
+    actual=[]
+    budget=[]
+    for a in data:
+        actual.append(a['total']['actual'])
+        budget.append(a['total']['budget'])
 
     ct={
-        'group_labels': group_labels,
-        'data': data,
+        'actual',actual
+        'budget': budget,
+        'name': 'Breakdown By Account'
 
     }
         

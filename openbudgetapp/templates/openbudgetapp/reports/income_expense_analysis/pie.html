@@ -1,68 +1,83 @@
-{% extends "openbudgetapp/base.html" %}
-{% load pyformat %}
+<script type="text/javascript">
+var chart;
 
 
-{% block title %}Budget Report{% endblock %}
-{% block content %}
-
-<table id="budget">
-<thead>
-<tr>
-<th>&nbsp;</th>
-{% for k in group_labels %}
-<th scope="col" colspan="2">{{k|date:"M Y"}}</th>
-{% endfor %}
-<th cope="col" colspan="2"><b>TOTAL</b></th>
-</tr>
-<tr>
-<th>&nbsp;</th>
-{% for k in group_labels %}
-<th>Actual</th>
-<th>Budget</th>
-{% endfor %}
-<th>Actual</th>
-<th>Budget</th>
-</tr>
-
-</thead>
-<tbody>
-
-{% for a,x in data.items %}
-{%if a != "total" %}
-<tr>
 	
-	<td>{{a.name}}</td>
-	{% for g,d in x.items %}
-	{% if g != "total" %}
-	<td>{% pyformat d.actual_pct "{0:.2f}" %}</td>
-	<td>{% pyformat d.budget_pct "{0:.2f}" %}</td>
-	{% endif %}
-	{%if forloop.last %}
-	<td><b>{% pyformat x.total.actual "{0:.0f}" %}</b></td>
-	<td><b>{% pyformat x.total.budget "{0:.0f}" %}</b></td>
-	{%endif %}
-	{% endfor %}
-</tr>
-{% endif %}
-{%if forloop.last %}
-</tbody>
-<tfoot>
-<tr>
-	<td>TOTAL</td>
-	{% for g,d in data.total.items %}
-	<td>{% pyformat d.actual "{0:.0f}" %}</td>
-	<td>{% pyformat d.budget "{0:.0f}" %}</td>
-	{% endfor %}
+function makechart() {	chart = new Highcharts.StockChart({
+		chart: {
+			renderTo: 'container',
+			defaultSeriesType: 'line',
+		},
+		
+		
+		title: {
+			text: '{{name}}',
+			x: -20 //center
+		},
+
+		subtitle: {
+			text: '',
+			x: -20
+		},
+
+		xAxis: {
+			maxZoom : 14 * 24 * 3600000 // fourteen days
+
+		},
+
+		rangeSelector: {
+	        selected: 4
+	    },
+		
+		yAxis: {
+			title: {
+				text: 'Return'
+			},
+			labels: {
+	    		formatter: function() {
+    			return (this.value > 0 ? '+' : '') + this.value + '%';
+    			}
+			},
+    		plotLines: [{
+	    		value: 0,
+	    		width: 2,
+	    		color: 'silver'
+	    	}]
+	    },
+		
 	
-</tr>
-</tfoot>
+		plotOptions: {
+		    	series: {
+		    		
+		    	}
+		},
+		
+		tooltip: {
+	    	pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}%</b><br/>',
+	    	yDecimals: 2
+	    },
+	
+		legend: {
+			layout: 'vertical',
+			align: 'right',
+			verticalAlign: 'top',
+			x: -10,
+			y: 100,
+			borderWidth: 0
+		},
+	
+		series: [
+			{name: 'actual',
+				//data: [1, 27, 34, 39, 46, 56]
+			data: [{{ actual|join:"," }}]
+			},
+			{name: 'budget',
+			//data: [1, 27, 34, 39, 46, 56]
+			data: [{{ budget|join:"," }}]
+			},
+		]
+	});
+};
 
-{% endif %}
-
-
-{% endfor %}
-</table>
-
-
-
-{% endblock %}
+</script>
+<div id="container" style="width: 700px;height: 500px"></div>
