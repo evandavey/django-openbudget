@@ -2,13 +2,13 @@
 {% block title %}Transaction Journal{% endblock %}
 {% block content %}
 
-{% regroup transactions by postdate|date:"m-Y" as transaction_list %}
+{% regroup transactions by postdate|date:"M-Y" as transaction_list %}
 
 
 {% for tgrp in transaction_list %}
 <div class="row">
 <div class="span2">
-	<h4>{{tgrp.grouper|date:"M-Y"}}</h4>
+	<h4>{{tgrp.grouper}}</h4>
 	<div class="row">
 		<div class="span12">
 		<table class="table">
