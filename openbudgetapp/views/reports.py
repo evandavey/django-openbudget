@@ -108,7 +108,9 @@ def income_expense_analysis(request,accountset_id):
     
     chartdata={}
     for l,a in data.iteritems():
-        chartdata[l]=a['total']['actual']
+        
+        if l != 'total':
+            chartdata[l]=a['total']['actual']
         
     
     

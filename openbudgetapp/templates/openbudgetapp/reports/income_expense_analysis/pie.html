@@ -37,13 +37,14 @@ function makechart() {	chart = new Highcharts.Chart({
 					formatter: function() {
 						return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';
 					},
+				
 				showInLegend: true
-				}
+				
 			}
 		},
 		series: [{
 			type: 'pie',
-			name: 'Browser share',
+			name: 'actual',
 			data: [
 				{% for label,val in data.items %}
 				{% if for.last %}
