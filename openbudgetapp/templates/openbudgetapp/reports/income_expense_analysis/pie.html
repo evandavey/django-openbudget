@@ -8,9 +8,9 @@ var chart;
 
 
 	
-function makechart() {	chart = new Highcharts.StockChart({
+function makechart() {	chart = new Highcharts.Chart({
 		chart: {
-			renderTo: 'container',
+			renderTo: 'chart',
 			defaultSeriesType: 'line',
 		},
 		
@@ -85,6 +85,6 @@ function makechart() {	chart = new Highcharts.StockChart({
 };
 
 </script>
-<div id="container" style="width: 700px;height: 500px"></div>
+<div id="chart" style="width: 700px;height: 500px"></div>
 
 {% endblock %}
