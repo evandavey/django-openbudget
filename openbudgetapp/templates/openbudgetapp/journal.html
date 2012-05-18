@@ -8,18 +8,18 @@
 <div class="span2">
 	<h4>{{t.postdate}}</h4>
 	<div class="row">
-		<div class="span4 offset1">
+		<div class="span4 well">
 			{{t.description}}
 		</div>
 	</div>
 	{% for s in t.splits %}
 	
 	<div class="row">
-		<div class="span8 offset2">
+		<div class="span9 offset1">
 			{{s.account.formatted_name}}
 		</div>
 		<div class="span2">
-			{{s.account.amt}}
+			{{s.amt}} {{s.db_or_cr}}
 		</div>
 	</div>
 	
