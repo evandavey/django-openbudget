@@ -14,6 +14,14 @@ def budget_data(accounts,startdate,enddate,method):
 
     p=accounts.budgetpanel(startdate,enddate)
 
+    #can only display 6 periods at a time
+    if endate-startdate>timedelta(days=366):
+        method='y'
+    elif endate-startdate>timedelta(days=190):
+        method='q'
+    elif enddate-startdate>timedelta(days=366*6):
+        raise Exception("Period too long, can only display a max of 6 years")
+    
 
     #group the panel into analysis subperiods
     if method=='m':
@@ -89,15 +97,11 @@ def budget_data(accounts,startdate,enddate,method):
 
 
 @login_required(login_url='/accounts/login/')
-def income_expense_analysis(request,accountset_id):
+def budget(request,accountset_id,startdate,enddate,depth,method):
 
 
     account_type='EXPENSE'
     
-    startdate=datetime(2011,12,1)
-    enddate=datetime(2012,3,31)
-    
-    method='m'
     
     #load the budget panel
     accounts=Account.objects.filter(account_type=account_type,accountset_id=accountset_id)
