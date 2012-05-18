@@ -113,9 +113,9 @@ def income_expense_analysis(request,accountset_id):
         budget.append(a['total']['budget'])
 
     ct={
-        'actual',actual,
+        'actual': actual,
         'budget': budget,
-        'name': 'Breakdown By Account'
+        'name': 'Breakdown By Account',
 
     }
         
