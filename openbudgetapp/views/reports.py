@@ -101,8 +101,8 @@ def budget(request,accountset_id,startdate,enddate,depth,method):
 
 
     try:
-        startdate=datetime.strftime('%Y%m%d',startdate)
-        enddate=datetime.strftime('%Y%m%d',enddate)
+        startdate=datetime.stpftime('%Y%m%d',startdate)
+        enddate=datetime.strptime('%Y%m%d',enddate)
         
     except:
         raise Exception('Error in date format, should be YYYYMMDD')
