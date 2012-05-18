@@ -138,6 +138,7 @@ def income_expense_analysis(request,accountset_id):
   
     ct={
          'pie': pie,
+         'overall_budget_report': budget,
 
      }
     
