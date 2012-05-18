@@ -111,7 +111,7 @@ def budget(request,accountset_id,startdate,enddate,depth,account_type):
     
     
     #load the budget panel
-    accounts=Account.objects.filter(account_type=account_type,accountset_id=accountset_id,depth=depth)
+    accounts=Account.objects.filter(account_type=account_type,accountset_id=accountset_id,depth__lte=depth)
 
     data,group_labels=budget_data(accounts,startdate,enddate)
 
