@@ -101,7 +101,7 @@ def budget(request,accountset_id,startdate,enddate,depth,method):
 
 
     try:
-        startdate=datetime.strpftime('%Y%m%d',startdate)
+        startdate=datetime.strptime('%Y%m%d',startdate)
         enddate=datetime.strptime('%Y%m%d',enddate)
         
     except:
