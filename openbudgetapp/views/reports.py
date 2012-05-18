@@ -9,7 +9,7 @@ from django.utils.datastructures import SortedDict
 from django.template.loader import render_to_string
 
 
-def budget_data(accounts,startdate,enddate,method):
+def budget_data(accounts,startdate,enddate):
 
 
     p=accounts.budgetpanel(startdate,enddate)
@@ -21,7 +21,8 @@ def budget_data(accounts,startdate,enddate,method):
         method='y'
     elif enddate-startdate>timedelta(days=190):
         method='q'
-
+    else:
+        method='m'
 
     #group the panel into analysis subperiods
     if method=='m':
@@ -97,7 +98,7 @@ def budget_data(accounts,startdate,enddate,method):
 
 
 @login_required(login_url='/accounts/login/')
-def budget(request,accountset_id,startdate,enddate,depth,method):
+def budget(request,accountset_id,startdate,enddate,depth,account_type):
 
 
     try:
@@ -107,13 +108,12 @@ def budget(request,accountset_id,startdate,enddate,depth,method):
     except:
         raise Exception('Error in date format, should be YYYYMMDD')
 
-    account_type='EXPENSE'
     
     
     #load the budget panel
     accounts=Account.objects.filter(account_type=account_type,accountset_id=accountset_id)
 
-    data,group_labels=budget_data(accounts,startdate,enddate,method)
+    data,group_labels=budget_data(accounts,startdate,enddate)
 
     #convert data for use in pie chart %
     
