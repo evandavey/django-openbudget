@@ -129,6 +129,7 @@ class Command(BaseCommand):
 			s.guid as sID,
 			cast(s.quantity_num as float)/cast(s.quantity_denom as float) as sValue,
 			s.tx_guid as tID,
+			s.memo as sMemo,
 			s.account_guid as aID
 
 		from splits as s 
@@ -146,6 +147,7 @@ class Command(BaseCommand):
 			s.tx_id=r['tId']
 			s.account_id=r['aID']
 			s.value=r['sValue']
+			s.memo=r['sMemo']
 
 			s.save()
 

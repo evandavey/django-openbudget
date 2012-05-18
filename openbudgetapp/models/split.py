@@ -55,6 +55,7 @@ class Split(models.Model):
 	tx=models.ForeignKey("Transaction")
 	account=models.ForeignKey("Account")
 	value=models.DecimalField(decimal_places=4,max_digits=20)
+	memo=models.CharField(max_length=2048)
 	
 	objects=SplitManager()
 	    
