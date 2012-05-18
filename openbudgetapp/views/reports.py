@@ -6,7 +6,7 @@ from django.template import RequestContext
 import pandas as ps
 from pandas.core.datetools import MonthEnd
 from django.utils.datastructures import SortedDict
-
+from django.template.loader import render_to_string
 
 
 def budget_data(accounts,startdate,enddate,method):
@@ -117,13 +117,18 @@ def income_expense_analysis(request,accountset_id):
     ct={
         'data': chartdata,
         'name': 'Breakdown By Account',
+        'id': 'piechart'
 
     }
         
         
-    return render_to_response('openbudgetapp/reports/income_expense_analysis/pie.html',ct,context_instance=RequestContext(request))
+    pie=render_to_string('openbudgetapp/reports/income_expense_analysis/pie.html',ct,context_instance=RequestContext(request))
     
-        
-        
-        
+  
+    ct={
+         'pie': pie,
+
+     }
     
+    return render_to_response('openbudgetapp/reports/income_expense_analysis/report.html',ct,context_instance=RequestContext(request))
+        

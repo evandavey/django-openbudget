@@ -1,7 +1,3 @@
-{% extends "openbudgetapp/base.html" %}
-
-{% block title %}Account Breakdown{% endblock %}
-{% block content %}
 
 <script type="text/javascript">
 var chart;
@@ -13,7 +9,7 @@ $(document).ready(function() {
 	
 function makechart() {	chart = new Highcharts.Chart({
 		chart: {
-			renderTo: 'chart',
+			renderTo: '{{id}}',
 			plotBackgroundColor: null,
 			plotBorderWidth: null,
 			plotShadow: false
@@ -59,6 +55,5 @@ function makechart() {	chart = new Highcharts.Chart({
 };
 
 </script>
-<div id="chart" style="width: 700px;height: 500px"></div>
+<div id="{{id}}" style="width: 700px;height: 500px"></div>
 
-{% endblock %}
