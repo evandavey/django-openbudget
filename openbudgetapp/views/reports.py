@@ -85,7 +85,7 @@ def budget_data(accounts,startdate,enddate,method):
                 data[i]['total']={'actual':act,'budget':bud}
                 
                 
-        return (data,group_labels)
+        return data,group_labels
 
 
 @login_required(login_url='/accounts/login/')

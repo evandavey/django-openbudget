@@ -23,9 +23,9 @@ function makechart_{{id}}() {	chart_{{id}} = new Highcharts.Chart({
 				
 				{% for g in group_labels %}
 					{% if for.last %}
-					'{{g}}'
+					'{{g|date:"M Y"}}'
 					{%else%}
-					'{{g}}',
+					'{{g|date:"M Y"}}',
 					{%endif%}
 				{%endfor%}
 			
