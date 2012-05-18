@@ -66,7 +66,7 @@ def income_expense_analysis(request,accountset_id):
                             'actual':act,
                             'budget':bud,
                             'actual_pct':act_pct,
-                            'budget_pct':budget_pct,
+                            'budget_pct':bud_pct,
                 }
                 
                 #category total for period
@@ -78,7 +78,7 @@ def income_expense_analysis(request,accountset_id):
                             'actual':act,
                             'budget':bud,
                             'actual_pct':act_pct,
-                            'budget_pct':budget_pct,
+                            'budget_pct':bud_pct,
                 }
                 
                 
