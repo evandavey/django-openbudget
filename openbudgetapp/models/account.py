@@ -218,7 +218,7 @@ class Account(models.Model):
 
         for c in self.child.all():
             cts=c.timeseries
-            if cts and len(cts)>0:
+            if cts is not None and len(cts)>0:
                 ts=ts.combine(cts,np.sum,0)
 
         if bs:
