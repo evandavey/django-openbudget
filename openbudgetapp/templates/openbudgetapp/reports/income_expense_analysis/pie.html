@@ -1,6 +1,6 @@
 {% extends "openbudgetapp/base.html" %}
 
-{% block title %}Budget Report{% endblock %}
+{% block title %}Account Breakdown{% endblock %}
 {% block content %}
 
 <script type="text/javascript">
@@ -36,10 +36,10 @@ function makechart() {	chart = new Highcharts.Chart({
 					connectorColor: '#000000',
 					formatter: function() {
 						return '<b>'+ this.point.name +'</b>: '+ this.percentage +' %';
-					},
-				
+					}
+				},
 				showInLegend: true
-			}
+			
 			}
 		},
 		series: [{
