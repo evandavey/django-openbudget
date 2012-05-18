@@ -51,6 +51,14 @@ class Account(models.Model):
     parent=models.ForeignKey('self',null=True,related_name='child')
     objects=AccountManager()
     code=models.CharField(max_length=20,null=True)
+    depth=models.PositiveIntegerField()
+
+
+    def save(self, *args, **kwargs):
+
+        self.depth=self._calc_depth()
+
+        super(Account, self).save(*args, **kwargs) # Call the "real" save() method.
 
     @property
     def extras(self):
@@ -86,7 +94,7 @@ class Account(models.Model):
 
 
     @property 
-    def depth(self):
+    def _calc_depth(self):
     
         depth=0
         p=self.parent
