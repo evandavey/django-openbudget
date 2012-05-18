@@ -3,11 +3,11 @@
 var chart_{{id}};
 
 $(document).ready(function() {
-	makechart();
+	makechart_{{id}}();
 });
 	
 	
-function makechart() {	chart_{{id}} = new Highcharts.Chart({
+function makechart_{{id}}() {	chart_{{id}} = new Highcharts.Chart({
 		chart: {
 			renderTo: '{{id}}',
 			type: 'column'
@@ -21,7 +21,7 @@ function makechart() {	chart_{{id}} = new Highcharts.Chart({
 		xAxis: {
 			categories: [
 				
-				{% for g in group_labels %}
+				{% for g,x in group_labels.items %}
 					{% if for.last %}
 					'{{g}}'
 					{%else%}

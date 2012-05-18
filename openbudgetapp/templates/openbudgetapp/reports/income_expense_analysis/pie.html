@@ -3,11 +3,11 @@
 var chart_{{id}};
 
 $(document).ready(function() {
-	makechart();
+	makechart_{{id}}();
 });
 	
 	
-function makechart() {	chart_{{id}} = new Highcharts.Chart({
+function makechart_{{id}}() {	chart_{{id}} = new Highcharts.Chart({
 		chart: {
 			renderTo: '{{id}}',
 			plotBackgroundColor: null,
