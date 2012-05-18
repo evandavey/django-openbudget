@@ -7,6 +7,7 @@ urlpatterns = patterns('',
 (r'^$','openbudgetapp.views.index'),
 (r'^budget/(?P<startdate>\d+)/(?P<enddate>\d+)/(?P<depth>\d+)/(?P<method>\w+)/$','openbudgetapp.views.budget_report'),
 (r'^(?P<accountset_id>\d+)/journal/$','openbudgetapp.views.journal'),
+(r'^(?P<accountset_id>\d+)/income_expense_report/$','openbudgetapp.views.reports.income_expense_analysis'),
 
 )
 
