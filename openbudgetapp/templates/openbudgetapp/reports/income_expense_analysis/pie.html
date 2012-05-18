@@ -34,8 +34,8 @@
 	<td>{{a.name}}</td>
 	{% for g,d in x.items %}
 	{% if g != "total" %}
-	<td>{% pyformat d.actual_pct "{0:.0f}" %}</td>
-	<td>{% pyformat d.budget_pct "{0:.0f}" %}</td>
+	<td>{% pyformat d.actual_pct "{0:.2f}" %}</td>
+	<td>{% pyformat d.budget_pct "{0:.2f}" %}</td>
 	{% endif %}
 	{%if forloop.last %}
 	<td><b>{% pyformat x.total.actual "{0:.0f}" %}</b></td>
