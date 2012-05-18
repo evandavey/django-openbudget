@@ -38,7 +38,11 @@
 		<td>{% pyformat d.budget "{0:.0f}" %}</td>
 		{% endif %}
 		{%if forloop.last %}
-		<th>{% pyformat x.total.actual "{0:.0f}" %}</th>
+		<th>
+					<span class="label {%if d.actual < d.budget%}label-success{%else%}label-important{%endif%}">
+						{% pyformat x.total.actual "{0:.0f}" %}
+					</span>
+		</th>
 		<th>{% pyformat x.total.budget "{0:.0f}" %}</th>
 		{%endif %}
 		{% endfor %}
