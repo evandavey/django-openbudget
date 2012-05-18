@@ -106,9 +106,10 @@ def income_expense_analysis(request,accountset_id):
 
     #convert data into overall %
     
-    data=SortedDict()
+    data={}
     for l,a in data.iteritems():
         data[l]=a['total']['actual']
+        
         
     ct={
         'data': data,
