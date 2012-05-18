@@ -108,7 +108,7 @@ def income_expense_analysis(request,accountset_id):
     
     actual=[]
     budget=[]
-    for a in data:
+    for l,a in data.iteritems():
         actual.append(a['total']['actual'])
         budget.append(a['total']['budget'])
 
