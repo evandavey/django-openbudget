@@ -6,6 +6,7 @@ from openbudgetapp.models import Account
 urlpatterns = patterns('',
 (r'^$','openbudgetapp.views.index'),
 (r'^budget/(?P<startdate>\d+)/(?P<enddate>\d+)/(?P<depth>\d+)/(?P<method>\w+)/$','openbudgetapp.views.budget_report'),
+(r'^(?P<accountset_id>\d+)/journal/$','openbudgetapp.views.journal'),
 
 )
 
@@ -38,7 +39,7 @@ urlpatterns += patterns('openbudgetapp.views.business',
 URLS - Admin
 """
 urlpatterns += patterns('openbudgetapp.views.admin',
-  (r'^gnucash-import/(?P<accountset_id>\d+)/$', 
+  (r'^gnucash-import/(?P<accountset_id>\d+)/?$', 
   	'gnucash_import',
   	None,
   	'gnucash-import'),

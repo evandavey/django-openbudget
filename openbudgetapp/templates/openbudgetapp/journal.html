@@ -1,0 +1,21 @@
+{% extends "openbudgetapp/base.html" %}
+{% block title %}Transaction Journal{% endblock %}
+{% block content %}
+
+
+{% for t in transactions %}
+<div class="row">
+<div class="span2">
+	{{t.post_date}}
+</div>
+
+</div>
+{% endfor %}
+	
+	
+
+
+{% endblock %}
+
+
+

@@ -18,6 +18,19 @@ def logout_view(request):
     return redirect('/')
     
 
+@login_required(login_url='/accounts/login/')
+def journal(request,accountset_id):
+    
+    accountset=AccountSet.objects.get(pk=accountset_id)
+
+    transactions=Transaction.objects.filter(accountset=accountset)
+
+    ct={'transactions':transactions,
+
+    }
+
+    return render_to_response('openbudgetapp/journal.html',ct,context_instance=RequestContext(request))
+
 
 @login_required(login_url='/accounts/login/')
 def limited_object_detail(*args, **kwargs):
