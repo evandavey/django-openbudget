@@ -9,27 +9,39 @@
 <div class="row">
 <div class="span2">
 	<h4>{{tgrp.grouper}}</h4>
+	<div class="row">
+		<div class="span12">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Description</th>
+					<th>Account Type</th>
+					<th>Account</th>
+					<th>Value</th>
+				</tr>
+			<tbody>
 	{% for t in tgrp.list %}
-	
-	<div class="row">
-		<div class="span4">
-			{{t.description}}
-		</div>
-	</div>
-	{% for s in t.splits %}
-	
-	<div class="row">
-		<div class="span8 offset1">
-			{{s.account.formatted_name}}
-		</div>
-		<div class="span2 offset8">
-			{{s.amt}} {{s.db_or_cr}}
-		</div>
-	</div>
-	{% endfor %}
-	{% endfor %}
-</div>
+			<tr>
+				<th>{{t.description}}</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+			</tr>
 
+			{% for s in t.splits %}
+			<tr>
+				<th>{{s.memo}}</th>
+				<th>{{s.account.account_type}}</th>
+				<th>{{s.account.name}}</th>
+				<th>{{s.amt}} {{s.db_or_cr}}</th>
+			</tr>
+			{% endfor %}
+		{% endfor %}
+			</tbody>
+		</table>
+		</div>
+	<div>
+</div>
 </div>
 {% endfor %}
 	
