@@ -5,10 +5,12 @@
 {% regroup transactions by postdate as transaction_list %}
 
 
-{% for t in transaction_list %}
+{% for tgrp in transaction_list %}
 <div class="row">
 <div class="span2">
-	<h4>{{t.postdate}}</h4>
+	<h4>{{tgrp.grouper}}</h4>
+	{% for t in tgrp.list %}
+	
 	<div class="row">
 		<div class="span4">
 			{{t.description}}
@@ -24,7 +26,7 @@
 			{{s.amt}} {{s.db_or_cr}}
 		</div>
 	</div>
-	
+	{% endfor %}
 	{% endfor %}
 </div>
 
