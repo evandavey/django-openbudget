@@ -148,7 +148,7 @@ def income_expense_analysis(request,accountset_id):
            'budget': budget,
            'name': 'overall',
            'id':'overallbarchart',
-           'group_labels':'group_labels'
+           'group_labels':group_labels,
        }
 
     overall_budget_chart=render_to_string('openbudgetapp/reports/income_expense_analysis/budgetbar.html',ct,context_instance=RequestContext(request))
