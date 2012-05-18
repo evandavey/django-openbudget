@@ -6,7 +6,12 @@
 {% for t in transactions %}
 <div class="row">
 <div class="span2">
-	{{t.postdate}}
+	<h3>{{t.postdate}}</h3>
+	<div class="row">
+		<div class="span4 offset2">
+			{{t.description}}
+		</div>
+	</div>
 </div>
 
 </div>
