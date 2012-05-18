@@ -21,7 +21,7 @@ function makechart_{{id}}() {	chart_{{id}} = new Highcharts.Chart({
 		xAxis: {
 			categories: [
 				
-				{% for g,x in group_labels.items %}
+				{% for g in group_labels %}
 					{% if for.last %}
 					'{{g}}'
 					{%else%}
@@ -61,7 +61,7 @@ function makechart_{{id}}() {	chart_{{id}} = new Highcharts.Chart({
 		},
 			series: [{
 			name: 'Actual',
-			data: [{{atual|join:","}}]
+			data: [{{actual|join:","}}]
 
 		}, {
 			name: 'Budget',
