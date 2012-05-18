@@ -8,6 +8,7 @@ distribute-*
 *.db
 *.pyc
 *.swp
+src
 192*
 tagger/*
 openbudgetapp/management/commands/tagger-export.py
