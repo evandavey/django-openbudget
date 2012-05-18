@@ -110,7 +110,8 @@ def income_expense_analysis(request,accountset_id):
     for l,a in data.iteritems():
         data[l]=a['total']['actual']
         
-        
+    data['testing']=1
+    
     ct={
         'data': data,
         'name': 'Breakdown By Account',
