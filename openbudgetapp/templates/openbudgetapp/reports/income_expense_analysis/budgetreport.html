@@ -31,7 +31,7 @@
 		{% for g,d in x.items %}
 		{% if g != "total" %}
 		<td>
-			<span class="label {%if d.actual>d.budget%}label-success{%else%}label-error{%endif%}">
+			<span class="label {%if d.actual > d.budget%}label-success{%else%}label-error{%endif%}">
 			{% pyformat d.actual "{0:.0f}" %}
 			</span>
 		</td>
