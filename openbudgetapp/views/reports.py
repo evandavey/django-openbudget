@@ -32,7 +32,13 @@ def income_expense_analysis(request,accountset_id):
         grouped=p.groupby(lambda x: datetime(x.year,(((x.month-1)//3)+1)*3,1)+MonthEnd())
     else:
         grouped=p.groupby(lambda x: datetime(x.year,12,31))
-        
+      
+      
+    group_labels=[]
+
+    from django.utils.datastructures import SortedDict
+    data=SortedDict()
+    data['total']=SortedDict()  
     
     for (g,gp) in grouped:
         group_labels.append(g)
