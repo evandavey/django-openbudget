@@ -104,18 +104,18 @@ def income_expense_analysis(request,accountset_id):
 
     data,group_labels=budget_data(accounts,startdate,enddate,method)
 
-    #convert data into overall %
+    #convert data for use in pie chart %
     
-    chartdata={}
+    chartdata_act={}
     for l,a in data.iteritems():
         
         if l != 'total':
-            chartdata[l]=a['total']['actual']
+            chartdata_act[l]=a['total']['actual']
         
     
     
     ct={
-        'data': chartdata,
+        'data': chartdata_act,
         'name': 'Breakdown By Account',
         'id': 'piechart'
 
@@ -123,6 +123,17 @@ def income_expense_analysis(request,accountset_id):
         
         
     pie=render_to_string('openbudgetapp/reports/income_expense_analysis/pie.html',ct,context_instance=RequestContext(request))
+
+    ct={
+        'actual': data['total']['actual'],
+        'budget': data['total']['budget'],
+        'vsbudget': data['total']['actual']-data['total']['budget'],
+
+    }
+
+
+
+    budget=render_to_string('openbudgetapp/reports/income_expense_analysis/budgetreport.html',ct,context_instance=RequestContext(request))
     
   
     ct={

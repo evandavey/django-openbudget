@@ -1,13 +1,13 @@
 
 <script type="text/javascript">
-var chart;
+var chart_{{id}};
 
 $(document).ready(function() {
 	makechart();
 });
 	
 	
-function makechart() {	chart = new Highcharts.Chart({
+function makechart() {	chart_{{id}} = new Highcharts.Chart({
 		chart: {
 			renderTo: '{{id}}',
 			plotBackgroundColor: null,
