@@ -93,7 +93,6 @@ class Account(models.Model):
         return self.split_set.all().timeseries()
 
 
-    @property 
     def _calc_depth(self):
     
         depth=0
