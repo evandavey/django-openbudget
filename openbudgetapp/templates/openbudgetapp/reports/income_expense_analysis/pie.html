@@ -1,3 +1,8 @@
+{% extends "openbudgetapp/base.html" %}
+
+{% block title %}Budget Report{% endblock %}
+{% block content %}
+
 <script type="text/javascript">
 var chart;
 
@@ -81,3 +86,5 @@ function makechart() {	chart = new Highcharts.StockChart({
 
 </script>
 <div id="container" style="width: 700px;height: 500px"></div>
+
+{% endblock %}
