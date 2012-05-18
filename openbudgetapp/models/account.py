@@ -212,8 +212,9 @@ class Account(models.Model):
         bs=self.budgets
         ts=self.timeseries
         
-        if len(ts)==0:
+        if not ts:
             return None
+        
 
         for c in self.child.all():
             cts=c.timeseries
