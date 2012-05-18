@@ -1,0 +1,75 @@
+
+<script type="text/javascript">
+var chart_{{id}};
+
+$(document).ready(function() {
+	makechart();
+});
+	
+	
+function makechart() {	chart_{{id}} = new Highcharts.Chart({
+		chart: {
+			renderTo: '{{id}}',
+			type: 'column'
+		},
+		title: {
+			text: '{{name}}'
+		},
+		subtitle: {
+			text: ''
+		},
+		xAxis: {
+			categories: [
+				
+				{% for g in group_labels %}
+					{% if for.last %}
+					'{{g}}'
+					{%else%}
+					'{{g}}',
+					{%endif%}
+				{%endfor%}
+			
+			]
+		},
+		yAxis: {
+			min: 0,
+			title: {
+				text: ''
+			}
+		},
+		legend: {
+			layout: 'vertical',
+			backgroundColor: '#FFFFFF',
+			align: 'left',
+			verticalAlign: 'top',
+			x: 100,
+			y: 70,
+			floating: true,
+			shadow: true
+		},
+		tooltip: {
+			formatter: function() {
+				return ''+
+					this.x +': '+ this.y +' mm';
+			}
+		},
+		plotOptions: {
+			column: {
+				pointPadding: 0.2,
+				borderWidth: 0
+			}
+		},
+			series: [{
+			name: 'Actual',
+			data: [{{atual|join:","}}]
+
+		}, {
+			name: 'Budget',
+			data: [{{budget|join:","}}]
+		}]
+	});
+};
+
+</script>
+<div id="{{id}}" style="width: 700px;height: 500px"></div>
+
