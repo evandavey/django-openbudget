@@ -8,7 +8,7 @@
 {% for tgrp in transaction_list %}
 <div class="row">
 <div class="span2">
-	<h4>{{tgrp.grouper}}</h4>
+	<h4>{{tgrp.grouper|date:"M-Y"}}</h4>
 	<div class="row">
 		<div class="span12">
 		<table class="table">
