@@ -113,11 +113,27 @@ class Transaction(models.Model):
 	        total+=abs(float(s.value))/2
 	        
 	    return total
+	
+	
+    def splits(self,startdate=None,enddate=None):
+
+        if startdate is None or enddate is None:
+            qs=self.split_set.all()
+        else:
+            qs=self.split_set.filter(tx__postdate__lte=enddate,tx__postdate__gte=startdate)
+
+        if len(qs)==0:
+            return None
+
+        vlqs = qs.values_list()
+        splits = np.core.records.fromrecords(vlqs, names=[f.name for f in Split._meta.fields])
+
+        return splits
 	    
-	@property
-	def splits(self):
-	    
-	    return self.split_set.all()
+    # @property
+    # def splits(self):
+    #     
+    #     return self.split_set.all()
 	
 	def __unicode__(self):
 		""" Returns the custom output string for this object
