@@ -122,6 +122,19 @@ class Account(models.Model):
         return "%s (%s)" % (self.formatted_name,self.account_type)
 
 
+    @property
+    def isInterestAccount(self):
+        
+        import re,string
+     
+        
+        m = re.search('interest', string.lower(self.formatted_name))
+        
+        if m and self.account_type=='INCOME':
+            return True
+        else:
+            return False
+        
 
     @property
     def investment_category(self):
